@@ -9,8 +9,11 @@ final exchangeRateServiceProvider = Provider<ExchangeRateService>((ref) {
 });
 
 final exchangeRatesProvider = FutureProvider<ExchangeResponse>((ref) async {
-  final settings = ref.watch(settingsProvider);
-  final settingsState = settings.valueOrNull;
+  final settingsAsync = ref.watch(settingsProvider);
+  final settingsState = switch (settingsAsync) {
+    AsyncData(:final value) => value,
+    _ => null,
+  };
   if (settingsState == null) {
     throw Exception('Settings not loaded');
   }

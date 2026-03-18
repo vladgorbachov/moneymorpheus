@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../providers/calculator_provider.dart';
-import '../providers/settings_provider.dart';
 import 'glass_card.dart';
 
 class CurrencyRow extends ConsumerWidget {
   final String currencyCode;
   final double amount;
+  final VoidCallback? onTap;
+  final bool isDarkMode;
 
   const CurrencyRow({
     super.key,
     required this.currencyCode,
     required this.amount,
+    this.onTap,
+    this.isDarkMode = true,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formatted = _formatAmount(amount);
+    final textColor = isDarkMode
+        ? Colors.white.withValues(alpha: 0.9)
+        : Colors.black.withValues(alpha: 0.85);
 
-    return GlassCard(
+    final content = GlassCard(
+      isDarkMode: isDarkMode,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       margin: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -30,7 +36,7 @@ class CurrencyRow extends ConsumerWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.white.withOpacity(0.9),
+              color: textColor,
             ),
           ),
           Text(
@@ -38,12 +44,21 @@ class CurrencyRow extends ConsumerWidget {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w500,
-              color: Colors.white.withOpacity(0.95),
+              color: textColor,
             ),
           ),
         ],
       ),
     );
+
+    if (onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: content,
+      );
+    }
+    return content;
   }
 
   String _formatAmount(double value) {

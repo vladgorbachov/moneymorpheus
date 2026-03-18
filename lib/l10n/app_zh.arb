@@ -1,0 +1,18 @@
+{
+  "@@locale": "zh",
+  "ac": "AC",
+  "backspace": "⌫",
+  "swap": "⇌",
+  "share": "分享",
+  "searchCurrency": "搜索货币",
+  "settings": "设置",
+  "baseCurrency": "基准货币（第1行）",
+  "row2Currency": "第2行货币",
+  "row3Currency": "第3行货币",
+  "showRow2": "显示第2行",
+  "showRow3": "显示第3行",
+  "done": "完成",
+  "darkMode": "深色模式",
+  "lightMode": "浅色模式",
+  "language": "语言"
+}

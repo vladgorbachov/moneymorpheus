@@ -2,10 +2,24 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:moneymorpheus/l10n/app_localizations.dart';
 
+import '../core/constants.dart';
 import '../core/currencies.dart';
 import '../providers/settings_provider.dart';
 import 'glass_card.dart';
+
+const List<MapEntry<String, String>> _supportedLocales = [
+  MapEntry('en', 'English'),
+  MapEntry('fr', 'Français'),
+  MapEntry('es', 'Español'),
+  MapEntry('ru', 'Русский'),
+  MapEntry('ar', 'العربية'),
+  MapEntry('zh', '中文'),
+  MapEntry('uk', 'Українська'),
+  MapEntry('pl', 'Polski'),
+  MapEntry('ro', 'Română'),
+];
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -35,17 +49,28 @@ class SettingsSheet extends ConsumerWidget {
     WidgetRef ref,
     SettingsState settings,
   ) {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = settings.isDarkMode;
+    final textColor = isDark
+        ? Colors.white.withValues(alpha: 0.95)
+        : Colors.black.withValues(alpha: 0.9);
+    final hintColor = isDark
+        ? Colors.white.withValues(alpha: 0.5)
+        : Colors.black.withValues(alpha: 0.5);
+    final sheetColor = (isDark ? Colors.black : Colors.white)
+        .withValues(alpha: 0.3);
+    final borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.15)
+        : Colors.black.withValues(alpha: 0.08);
+
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.7,
+        maxHeight: MediaQuery.of(context).size.height * 0.75,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.3),
+        color: sheetColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.15),
-          width: 1,
-        ),
+        border: Border.all(color: borderColor, width: 1),
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -63,49 +88,72 @@ class SettingsSheet extends ConsumerWidget {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
+                        color: hintColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Settings',
+                    l10n.settings,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white.withOpacity(0.95),
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 24),
+                  _buildSwitch(
+                    l10n.darkMode,
+                    settings.isDarkMode,
+                    (v) => ref.read(settingsProvider.notifier).setIsDarkMode(v),
+                    textColor,
+                    hintColor,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildLocaleSelector(context, ref, settings, l10n, textColor, hintColor, isDark),
+                  const SizedBox(height: 24),
                   _buildDropdown(
-                    'Base Currency (Row 1)',
+                    l10n.baseCurrency,
                     settings.baseCurrency,
                     (v) => ref.read(settingsProvider.notifier).setBaseCurrency(v),
+                    textColor,
+                    hintColor,
+                    isDark,
                   ),
                   const SizedBox(height: 16),
                   _buildDropdown(
-                    'Row 2 Currency',
+                    l10n.row2Currency,
                     settings.row2Currency,
                     (v) => ref.read(settingsProvider.notifier).setRow2Currency(v),
+                    textColor,
+                    hintColor,
+                    isDark,
                   ),
                   const SizedBox(height: 8),
                   _buildSwitch(
-                    'Show Row 2',
+                    l10n.showRow2,
                     settings.isRow2Visible,
                     (v) => ref.read(settingsProvider.notifier).setIsRow2Visible(v),
+                    textColor,
+                    hintColor,
                   ),
                   const SizedBox(height: 16),
                   _buildDropdown(
-                    'Row 3 Currency',
+                    l10n.row3Currency,
                     settings.row3Currency,
                     (v) => ref.read(settingsProvider.notifier).setRow3Currency(v),
+                    textColor,
+                    hintColor,
+                    isDark,
                   ),
                   const SizedBox(height: 8),
                   _buildSwitch(
-                    'Show Row 3',
+                    l10n.showRow3,
                     settings.isRow3Visible,
                     (v) => ref.read(settingsProvider.notifier).setIsRow3Visible(v),
+                    textColor,
+                    hintColor,
                   ),
                   const SizedBox(height: 32),
                   SizedBox(
@@ -113,10 +161,11 @@ class SettingsSheet extends ConsumerWidget {
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                        foregroundColor: Colors.white,
+                        backgroundColor: (isDark ? Colors.white : Colors.black)
+                            .withValues(alpha: 0.2),
+                        foregroundColor: textColor,
                       ),
-                      child: const Text('Done'),
+                      child: Text(l10n.done),
                     ),
                   ),
                 ],
@@ -128,32 +177,65 @@ class SettingsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildDropdown(
-    String label,
-    String value,
-    void Function(String) onChanged,
+  Widget _buildLocaleSelector(
+    BuildContext context,
+    WidgetRef ref,
+    SettingsState settings,
+    AppLocalizations l10n,
+    Color textColor,
+    Color hintColor,
+    bool isDark,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.white.withOpacity(0.7),
-          ),
-        ),
+        Text(l10n.language, style: TextStyle(fontSize: 14, color: hintColor)),
         const SizedBox(height: 8),
         GlassCard(
+          isDarkMode: isDark,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: DropdownButton<String>(
+            value: settings.locale.length >= 2 ? settings.locale.substring(0, 2) : settings.locale,
+            isExpanded: true,
+            dropdownColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F5),
+            style: TextStyle(color: textColor, fontSize: 16),
+            underline: const SizedBox(),
+            items: _supportedLocales
+                .map((e) => DropdownMenuItem<String>(
+                      value: e.key,
+                      child: Text('${e.key} - ${e.value}'),
+                    ))
+                .toList(),
+            onChanged: (v) {
+              if (v != null) ref.read(settingsProvider.notifier).setLocale(v);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdown(
+    String label,
+    String value,
+    void Function(String) onChanged,
+    Color textColor,
+    Color hintColor,
+    bool isDark,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontSize: 14, color: hintColor)),
+        const SizedBox(height: 8),
+        GlassCard(
+          isDarkMode: isDark,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: DropdownButton<String>(
             value: value,
             isExpanded: true,
-            dropdownColor: const Color(0xFF1E1E1E),
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.95),
-              fontSize: 16,
-            ),
+            dropdownColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F5),
+            style: TextStyle(color: textColor, fontSize: 16),
             underline: const SizedBox(),
             items: supportedCurrencies
                 .map((e) => DropdownMenuItem<String>(
@@ -174,21 +256,18 @@ class SettingsSheet extends ConsumerWidget {
     String label,
     bool value,
     void Function(bool) onChanged,
+    Color textColor,
+    Color hintColor,
   ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.white.withOpacity(0.7),
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 14, color: hintColor)),
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: Colors.blue,
+          activeTrackColor: accentColor.withValues(alpha: 0.5),
+          activeThumbColor: accentColor,
         ),
       ],
     );

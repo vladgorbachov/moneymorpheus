@@ -22,14 +22,11 @@ class CalculatorState {
 }
 
 final calculatorProvider =
-    StateNotifierProvider<CalculatorNotifier, CalculatorState>((ref) {
-  return CalculatorNotifier(ref);
-});
+    NotifierProvider<CalculatorNotifier, CalculatorState>(CalculatorNotifier.new);
 
-class CalculatorNotifier extends StateNotifier<CalculatorState> {
-  final Ref _ref;
-
-  CalculatorNotifier(this._ref) : super(const CalculatorState());
+class CalculatorNotifier extends Notifier<CalculatorState> {
+  @override
+  CalculatorState build() => const CalculatorState();
 
   void appendDigit(String digit) {
     if (digit == '.' && state.inputString.contains('.')) return;
@@ -87,9 +84,13 @@ double? convertAmount(
 
 final convertedAmountsProvider = Provider<Map<String, double>>((ref) {
   final calculator = ref.watch(calculatorProvider);
-  final settings = ref.watch(settingsProvider).valueOrNull;
+  final settingsAsync = ref.watch(settingsProvider);
   final ratesAsync = ref.watch(exchangeRatesProvider);
 
+  final settings = switch (settingsAsync) {
+    AsyncData(:final value) => value,
+    _ => null,
+  };
   if (settings == null) return {};
 
   final base = settings.baseCurrency;
@@ -98,7 +99,10 @@ final convertedAmountsProvider = Provider<Map<String, double>>((ref) {
 
   result[base] = amount;
 
-  final rates = ratesAsync.valueOrNull;
+  final rates = switch (ratesAsync) {
+    AsyncData(:final value) => value,
+    _ => null,
+  };
   if (rates != null) {
     if (settings.isRow2Visible && settings.row2Currency != base) {
       final converted =

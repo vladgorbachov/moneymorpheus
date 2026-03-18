@@ -1,0 +1,18 @@
+{
+  "@@locale": "uk",
+  "ac": "AC",
+  "backspace": "⌫",
+  "swap": "⇌",
+  "share": "Поділитися",
+  "searchCurrency": "Пошук валюти",
+  "settings": "Налаштування",
+  "baseCurrency": "Базова валюта (Рядок 1)",
+  "row2Currency": "Валюта рядка 2",
+  "row3Currency": "Валюта рядка 3",
+  "showRow2": "Показати рядок 2",
+  "showRow3": "Показати рядок 3",
+  "done": "Готово",
+  "darkMode": "Темний режим",
+  "lightMode": "Світлий режим",
+  "language": "Мова"
+}

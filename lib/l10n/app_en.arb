@@ -1,0 +1,18 @@
+{
+  "@@locale": "en",
+  "ac": "AC",
+  "backspace": "⌫",
+  "swap": "⇌",
+  "share": "Share",
+  "searchCurrency": "Search currency",
+  "settings": "Settings",
+  "baseCurrency": "Base Currency (Row 1)",
+  "row2Currency": "Row 2 Currency",
+  "row3Currency": "Row 3 Currency",
+  "showRow2": "Show Row 2",
+  "showRow3": "Show Row 3",
+  "done": "Done",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "language": "Language"
+}

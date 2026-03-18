@@ -1,0 +1,18 @@
+{
+  "@@locale": "ar",
+  "ac": "AC",
+  "backspace": "⌫",
+  "swap": "⇌",
+  "share": "مشاركة",
+  "searchCurrency": "البحث عن العملة",
+  "settings": "الإعدادات",
+  "baseCurrency": "العملة الأساسية (الصف 1)",
+  "row2Currency": "عملة الصف 2",
+  "row3Currency": "عملة الصف 3",
+  "showRow2": "إظهار الصف 2",
+  "showRow3": "إظهار الصف 3",
+  "done": "تم",
+  "darkMode": "الوضع الداكن",
+  "lightMode": "الوضع الفاتح",
+  "language": "اللغة"
+}

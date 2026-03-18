@@ -22,8 +22,9 @@ double? _extractNumber(String text) {
   final normalized = text.replaceAll(',', '.');
   final match = _numberRegex.firstMatch(normalized);
   if (match == null) return null;
-  final numStr = match.group(0)!.replaceAll(',', '.');
-  return double.tryParse(numStr);
+  final group = match.group(0);
+  if (group == null) return null;
+  return double.tryParse(group.replaceAll(',', '.'));
 }
 
 class MicrophoneButton extends ConsumerStatefulWidget {
@@ -63,8 +64,23 @@ class _MicrophoneButtonState extends ConsumerState<MicrophoneButton>
       return;
     }
 
-    final available = await _speech.initialize();
-    if (!available) return;
+    final available = await _speech.initialize(
+      onError: (error) {
+        if (mounted) {
+          setState(() => _isListening = false);
+          _pulseController.stop();
+          _pulseController.reset();
+        }
+      },
+      onStatus: (status) {
+        if (status == stt.SpeechToText.doneStatus && mounted) {
+          setState(() => _isListening = false);
+          _pulseController.stop();
+          _pulseController.reset();
+        }
+      },
+    );
+    if (!available || !_speech.isAvailable) return;
 
     final locales = await _speech.locales();
     final localeIds = locales.map((l) => l.localeId).toSet();
@@ -91,12 +107,15 @@ class _MicrophoneButtonState extends ConsumerState<MicrophoneButton>
       localeId: localeId,
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 5),
-      partialResults: true,
+      listenOptions: stt.SpeechListenOptions(partialResults: true),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fgColor = isDark ? Colors.white : Colors.black;
+
     return GestureDetector(
       onTap: _toggleListening,
       child: AnimatedBuilder(
@@ -108,15 +127,15 @@ class _MicrophoneButtonState extends ConsumerState<MicrophoneButton>
             height: 56,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.1),
+              color: fgColor.withValues(alpha: 0.1),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: fgColor.withValues(alpha: 0.2),
                 width: 1,
               ),
               boxShadow: _isListening
                   ? [
                       BoxShadow(
-                        color: Colors.blue.withOpacity(0.5),
+                        color: Colors.blue.withValues(alpha: 0.5),
                         blurRadius: glowRadius,
                         spreadRadius: glowRadius / 4,
                       ),
@@ -127,7 +146,7 @@ class _MicrophoneButtonState extends ConsumerState<MicrophoneButton>
               _isListening ? Icons.mic : Icons.mic_none,
               color: _isListening
                   ? Colors.blue.shade200
-                  : Colors.white.withOpacity(0.8),
+                  : fgColor.withValues(alpha: 0.8),
               size: 28,
             ),
           );

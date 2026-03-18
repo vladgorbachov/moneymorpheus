@@ -1,0 +1,18 @@
+{
+  "@@locale": "ru",
+  "ac": "AC",
+  "backspace": "⌫",
+  "swap": "⇌",
+  "share": "Поделиться",
+  "searchCurrency": "Поиск валюты",
+  "settings": "Настройки",
+  "baseCurrency": "Базовая валюта (Строка 1)",
+  "row2Currency": "Валюта строки 2",
+  "row3Currency": "Валюта строки 3",
+  "showRow2": "Показать строку 2",
+  "showRow3": "Показать строку 3",
+  "done": "Готово",
+  "darkMode": "Тёмный режим",
+  "lightMode": "Светлый режим",
+  "language": "Язык"
+}

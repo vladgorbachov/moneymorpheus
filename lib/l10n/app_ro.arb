@@ -1,0 +1,18 @@
+{
+  "@@locale": "ro",
+  "ac": "AC",
+  "backspace": "⌫",
+  "swap": "⇌",
+  "share": "Partajează",
+  "searchCurrency": "Caută monedă",
+  "settings": "Setări",
+  "baseCurrency": "Monedă de bază (Rândul 1)",
+  "row2Currency": "Moneda rândului 2",
+  "row3Currency": "Moneda rândului 3",
+  "showRow2": "Afișează rândul 2",
+  "showRow3": "Afișează rândul 3",
+  "done": "Gata",
+  "darkMode": "Mod întunecat",
+  "lightMode": "Mod deschis",
+  "language": "Limbă"
+}

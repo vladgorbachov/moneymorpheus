@@ -1,0 +1,18 @@
+{
+  "@@locale": "pl",
+  "ac": "AC",
+  "backspace": "⌫",
+  "swap": "⇌",
+  "share": "Udostępnij",
+  "searchCurrency": "Szukaj waluty",
+  "settings": "Ustawienia",
+  "baseCurrency": "Waluta bazowa (Wiersz 1)",
+  "row2Currency": "Waluta wiersza 2",
+  "row3Currency": "Waluta wiersza 3",
+  "showRow2": "Pokaż wiersz 2",
+  "showRow3": "Pokaż wiersz 3",
+  "done": "Gotowe",
+  "darkMode": "Tryb ciemny",
+  "lightMode": "Tryb jasny",
+  "language": "Język"
+}

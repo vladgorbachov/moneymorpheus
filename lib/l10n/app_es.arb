@@ -1,0 +1,18 @@
+{
+  "@@locale": "es",
+  "ac": "AC",
+  "backspace": "⌫",
+  "swap": "⇌",
+  "share": "Compartir",
+  "searchCurrency": "Buscar moneda",
+  "settings": "Ajustes",
+  "baseCurrency": "Moneda base (Fila 1)",
+  "row2Currency": "Moneda fila 2",
+  "row3Currency": "Moneda fila 3",
+  "showRow2": "Mostrar fila 2",
+  "showRow3": "Mostrar fila 3",
+  "done": "Listo",
+  "darkMode": "Modo oscuro",
+  "lightMode": "Modo claro",
+  "language": "Idioma"
+}
