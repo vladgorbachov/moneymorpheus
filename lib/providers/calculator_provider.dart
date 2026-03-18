@@ -8,10 +8,7 @@ class CalculatorState {
   final String inputString;
   final double amount;
 
-  const CalculatorState({
-    this.inputString = '0',
-    this.amount = 0,
-  });
+  const CalculatorState({this.inputString = '0', this.amount = 0});
 
   CalculatorState copyWith({String? inputString, double? amount}) {
     return CalculatorState(
@@ -22,7 +19,9 @@ class CalculatorState {
 }
 
 final calculatorProvider =
-    NotifierProvider<CalculatorNotifier, CalculatorState>(CalculatorNotifier.new);
+    NotifierProvider<CalculatorNotifier, CalculatorState>(
+      CalculatorNotifier.new,
+    );
 
 class CalculatorNotifier extends Notifier<CalculatorState> {
   @override
@@ -46,7 +45,10 @@ class CalculatorNotifier extends Notifier<CalculatorState> {
       state = const CalculatorState();
       return;
     }
-    final newInput = state.inputString.substring(0, state.inputString.length - 1);
+    final newInput = state.inputString.substring(
+      0,
+      state.inputString.length - 1,
+    );
     state = state.copyWith(
       inputString: newInput,
       amount: _parseAmount(newInput),
@@ -104,16 +106,15 @@ final convertedAmountsProvider = Provider<Map<String, double>>((ref) {
     _ => null,
   };
   if (rates != null) {
-    if (settings.isRow2Visible && settings.row2Currency != base) {
-      final converted =
-          convertAmount(amount, base, settings.row2Currency, rates);
-      if (converted != null) result[settings.row2Currency] = converted;
-    }
-
-    if (settings.isRow3Visible && settings.row3Currency != base) {
-      final converted =
-          convertAmount(amount, base, settings.row3Currency, rates);
-      if (converted != null) result[settings.row3Currency] = converted;
+    final rows = [
+      if (settings.isRow2Visible) settings.row2Currency,
+      if (settings.isRow3Visible) settings.row3Currency,
+    ];
+    for (final currency in rows) {
+      if (currency != base) {
+        final converted = convertAmount(amount, base, currency, rates);
+        if (converted != null) result[currency] = converted;
+      }
     }
   }
 

@@ -4,6 +4,8 @@
   "backspace": "⌫",
   "swap": "⇌",
   "share": "Share",
+  "crypto": "Crypto",
+  "close": "Close",
   "searchCurrency": "Search currency",
   "settings": "Settings",
   "baseCurrency": "Base Currency (Row 1)",

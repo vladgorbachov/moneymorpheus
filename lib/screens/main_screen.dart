@@ -57,13 +57,14 @@ class MainScreen extends ConsumerWidget {
       },
       loading: () => Scaffold(
         backgroundColor: darkBackgroundColor,
-        body: Center(
-          child: CircularProgressIndicator(color: accentColor),
-        ),
+        body: Center(child: CircularProgressIndicator(color: accentColor)),
       ),
       error: (e, _) => Scaffold(
         body: Center(
-          child: Text('Error: $e', style: TextStyle(color: Colors.red.shade300)),
+          child: Text(
+            'Error: $e',
+            style: TextStyle(color: Colors.red.shade300),
+          ),
         ),
       ),
     );

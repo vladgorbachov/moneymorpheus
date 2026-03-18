@@ -5,7 +5,8 @@ import '../data/models/exchange_response.dart';
 import 'settings_provider.dart';
 
 final exchangeRateServiceProvider = Provider<ExchangeRateService>((ref) {
-  return ExchangeRateService();
+  final prefs = ref.read(sharedPreferencesAsyncProvider);
+  return ExchangeRateService(prefs);
 });
 
 final exchangeRatesProvider = FutureProvider<ExchangeResponse>((ref) async {

@@ -21,6 +21,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get share => 'مشاركة';
 
   @override
+  String get crypto => 'العملات المشفرة';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
   String get searchCurrency => 'البحث عن العملة';
 
   @override

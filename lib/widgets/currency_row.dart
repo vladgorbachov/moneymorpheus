@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'glass_card.dart';
 
-class CurrencyRow extends ConsumerWidget {
+class CurrencyRow extends StatelessWidget {
   final String currencyCode;
   final double amount;
   final VoidCallback? onTap;
@@ -18,7 +17,7 @@ class CurrencyRow extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final formatted = _formatAmount(amount);
     final textColor = isDarkMode
         ? Colors.white.withValues(alpha: 0.9)

@@ -4,6 +4,8 @@
   "backspace": "⌫",
   "swap": "⇌",
   "share": "Поделиться",
+  "crypto": "Крипто",
+  "close": "Закрыть",
   "searchCurrency": "Поиск валюты",
   "settings": "Настройки",
   "baseCurrency": "Базовая валюта (Строка 1)",

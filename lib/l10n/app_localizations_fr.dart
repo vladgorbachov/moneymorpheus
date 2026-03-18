@@ -21,6 +21,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get share => 'Partager';
 
   @override
+  String get crypto => 'Crypto';
+
+  @override
+  String get close => 'Fermer';
+
+  @override
   String get searchCurrency => 'Rechercher une devise';
 
   @override

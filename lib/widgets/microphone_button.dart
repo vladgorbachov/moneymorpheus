@@ -121,7 +121,9 @@ class _MicrophoneButtonState extends ConsumerState<MicrophoneButton>
       child: AnimatedBuilder(
         animation: _pulseController,
         builder: (context, child) {
-          final glowRadius = _isListening ? 12.0 + (_pulseController.value * 8) : 0.0;
+          final glowRadius = _isListening
+              ? 12.0 + (_pulseController.value * 8)
+              : 0.0;
           return Container(
             width: 56,
             height: 56,

@@ -21,6 +21,12 @@ class AppLocalizationsRo extends AppLocalizations {
   String get share => 'Partajează';
 
   @override
+  String get crypto => 'Crypto';
+
+  @override
+  String get close => 'Închide';
+
+  @override
   String get searchCurrency => 'Caută monedă';
 
   @override

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneymorpheus/l10n/app_localizations.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../providers/calculator_provider.dart';
-import '../providers/exchange_rate_provider.dart';
 import '../providers/settings_provider.dart';
+import '../screens/crypto_market_screen.dart';
 import 'numpad_button.dart';
 
 class CustomNumpad extends ConsumerWidget {
@@ -18,15 +17,10 @@ class CustomNumpad extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return settingsAsync.when(
-      data: (settings) => _buildNumpad(
-        context,
-        ref,
-        calculator,
-        settings,
-        l10n,
-      ),
+      data: (settings) =>
+          _buildNumpad(context, ref, calculator, settings, l10n),
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 
@@ -43,10 +37,13 @@ class CustomNumpad extends ConsumerWidget {
       crossAxisCount: 3,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
-      childAspectRatio: 1.1,
+      childAspectRatio: 1.85,
       children: [
         NumpadButton(label: l10n.ac, onTap: () => calculator.clear()),
-        NumpadButton(label: l10n.backspace, onTap: () => calculator.backspace()),
+        NumpadButton(
+          label: l10n.backspace,
+          onTap: () => calculator.backspace(),
+        ),
         NumpadButton(
           label: l10n.swap,
           onTap: () async {
@@ -64,54 +61,26 @@ class CustomNumpad extends ConsumerWidget {
         NumpadButton(label: '9', onTap: () => calculator.appendDigit('9')),
         NumpadButton(label: '.', onTap: () => calculator.appendDigit('.')),
         NumpadButton(label: '0', onTap: () => calculator.appendDigit('0')),
-        _ShareButton(l10n: l10n),
+        _CryptoButton(l10n: l10n),
       ],
     );
   }
 }
 
-class _ShareButton extends ConsumerWidget {
+class _CryptoButton extends ConsumerWidget {
   final AppLocalizations l10n;
 
-  const _ShareButton({required this.l10n});
+  const _CryptoButton({required this.l10n});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return NumpadButton(
-      label: l10n.share,
-      onTap: () => _shareConversion(context, ref),
+      label: l10n.crypto,
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute<void>(builder: (_) => const CryptoMarketScreen()),
+      ),
       isWide: true,
     );
-  }
-
-  Future<void> _shareConversion(BuildContext context, WidgetRef ref) async {
-    final settings = ref.read(settingsProvider).value ?? const SettingsState();
-    final amounts = ref.read(convertedAmountsProvider);
-
-    if (amounts.isEmpty) return;
-
-    final base = settings.baseCurrency;
-    final baseAmount = amounts[base] ?? 0;
-    final parts = <String>['Moneymorpheus conversion: $baseAmount $base'];
-
-    if (settings.isRow2Visible) {
-      final row2Amount = amounts[settings.row2Currency];
-      if (row2Amount != null) {
-        parts.add(' = ${row2Amount.toStringAsFixed(2)} ${settings.row2Currency}');
-      }
-    }
-    if (settings.isRow3Visible) {
-      final row3Amount = amounts[settings.row3Currency];
-      if (row3Amount != null) {
-        parts.add(' = ${row3Amount.toStringAsFixed(2)} ${settings.row3Currency}');
-      }
-    }
-
-    final dateStr = DateTime.now().toIso8601String().split('T').first;
-    final text = '${parts.join()}. Rate as of $dateStr';
-
-    try {
-      await Share.share(text);
-    } catch (_) {}
   }
 }

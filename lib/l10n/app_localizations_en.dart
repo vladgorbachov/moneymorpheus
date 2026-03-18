@@ -21,6 +21,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get share => 'Share';
 
   @override
+  String get crypto => 'Crypto';
+
+  @override
+  String get close => 'Close';
+
+  @override
   String get searchCurrency => 'Search currency';
 
   @override

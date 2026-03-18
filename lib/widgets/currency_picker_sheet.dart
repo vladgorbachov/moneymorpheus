@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:moneymorpheus/l10n/app_localizations.dart';
 
@@ -10,7 +9,7 @@ import '../core/currencies.dart';
 
 enum CurrencyPickerTarget { base, row2, row3 }
 
-class CurrencyPickerSheet extends ConsumerStatefulWidget {
+class CurrencyPickerSheet extends StatefulWidget {
   final CurrencyPickerTarget target;
   final String currentCurrency;
   final void Function(String) onSelected;
@@ -45,11 +44,10 @@ class CurrencyPickerSheet extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<CurrencyPickerSheet> createState() =>
-      _CurrencyPickerSheetState();
+  State<CurrencyPickerSheet> createState() => _CurrencyPickerSheetState();
 }
 
-class _CurrencyPickerSheetState extends ConsumerState<CurrencyPickerSheet> {
+class _CurrencyPickerSheetState extends State<CurrencyPickerSheet> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
   int _selectedIndex = 0;
@@ -60,8 +58,9 @@ class _CurrencyPickerSheetState extends ConsumerState<CurrencyPickerSheet> {
     _searchController.addListener(() {
       setState(() => _searchQuery = _searchController.text.toLowerCase());
     });
-    _selectedIndex = supportedCurrencies
-        .indexWhere((e) => e.key == widget.currentCurrency);
+    _selectedIndex = supportedCurrencies.indexWhere(
+      (e) => e.key == widget.currentCurrency,
+    );
     if (_selectedIndex < 0) _selectedIndex = 0;
   }
 
@@ -97,8 +96,9 @@ class _CurrencyPickerSheetState extends ConsumerState<CurrencyPickerSheet> {
         maxHeight: MediaQuery.of(context).size.height * 0.7,
       ),
       decoration: BoxDecoration(
-        color: (widget.isDarkMode ? Colors.black : Colors.white)
-            .withValues(alpha: 0.3),
+        color: (widget.isDarkMode ? Colors.black : Colors.white).withValues(
+          alpha: 0.3,
+        ),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(
           color: widget.isDarkMode
@@ -176,9 +176,9 @@ class _CurrencyPickerSheetState extends ConsumerState<CurrencyPickerSheet> {
                                   decoration: BoxDecoration(
                                     color: isSelected
                                         ? (widget.isDarkMode
-                                                ? const Color(0xFF658FA4)
-                                                : const Color(0xFF4A7A8C))
-                                            .withValues(alpha: 0.3)
+                                                  ? const Color(0xFF658FA4)
+                                                  : const Color(0xFF4A7A8C))
+                                              .withValues(alpha: 0.3)
                                         : Colors.transparent,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -217,7 +217,10 @@ class _CurrencyPickerSheetState extends ConsumerState<CurrencyPickerSheet> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (filtered.isNotEmpty) {
-                        final idx = _selectedIndex.clamp(0, filtered.length - 1);
+                        final idx = _selectedIndex.clamp(
+                          0,
+                          filtered.length - 1,
+                        );
                         widget.onSelected(filtered[idx].key);
                         Navigator.of(context).pop();
                       }

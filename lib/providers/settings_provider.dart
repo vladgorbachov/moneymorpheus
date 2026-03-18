@@ -60,8 +60,9 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   return SettingsRepository(ref.read(sharedPreferencesAsyncProvider));
 });
 
-final settingsProvider =
-    AsyncNotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);
+final settingsProvider = AsyncNotifierProvider<SettingsNotifier, SettingsState>(
+  SettingsNotifier.new,
+);
 
 class SettingsNotifier extends AsyncNotifier<SettingsState> {
   SettingsRepository get _repository => ref.read(settingsRepositoryProvider);
@@ -86,8 +87,14 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     );
   }
 
-  Future<void> _update(Future<void> Function() fn, SettingsState Function(SettingsState) update) async {
-    final current = switch (state) { AsyncData(:final value) => value, _ => null };
+  Future<void> _update(
+    Future<void> Function() fn,
+    SettingsState Function(SettingsState) update,
+  ) async {
+    final current = switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
     if (current == null) return;
     await fn();
     state = AsyncValue.data(update(current));
@@ -143,18 +150,23 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
   }
 
   Future<void> swapBaseWithRow2() async {
-    final current = switch (state) { AsyncData(:final value) => value, _ => null };
+    final current = switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
     if (current == null) return;
     await _repository.setBaseCurrency(current.row2Currency);
     await _repository.setRow2Currency(current.baseCurrency);
-    state = AsyncValue.data(SettingsState(
-      baseCurrency: current.row2Currency,
-      row2Currency: current.baseCurrency,
-      row3Currency: current.row3Currency,
-      isRow2Visible: current.isRow2Visible,
-      isRow3Visible: current.isRow3Visible,
-      isDarkMode: current.isDarkMode,
-      locale: current.locale,
-    ));
+    state = AsyncValue.data(
+      SettingsState(
+        baseCurrency: current.row2Currency,
+        row2Currency: current.baseCurrency,
+        row3Currency: current.row3Currency,
+        isRow2Visible: current.isRow2Visible,
+        isRow3Visible: current.isRow3Visible,
+        isDarkMode: current.isDarkMode,
+        locale: current.locale,
+      ),
+    );
   }
 }

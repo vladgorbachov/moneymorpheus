@@ -21,6 +21,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get share => 'Udostępnij';
 
   @override
+  String get crypto => 'Krypto';
+
+  @override
+  String get close => 'Zamknij';
+
+  @override
   String get searchCurrency => 'Szukaj waluty';
 
   @override

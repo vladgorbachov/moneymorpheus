@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneymorpheus/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ import 'screens/main_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   final legacyPrefs = await SharedPreferences.getInstance();
   await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
     legacySharedPreferencesInstance: legacyPrefs,
@@ -55,17 +57,11 @@ class MoneymorpheusApp extends ConsumerWidget {
       loading: () => MaterialApp(
         home: Scaffold(
           backgroundColor: darkBackgroundColor,
-          body: Center(
-            child: CircularProgressIndicator(
-              color: accentColor,
-            ),
-          ),
+          body: Center(child: CircularProgressIndicator(color: accentColor)),
         ),
       ),
       error: (e, _) => MaterialApp(
-        home: Scaffold(
-          body: Center(child: Text('Error: $e')),
-        ),
+        home: Scaffold(body: Center(child: Text('Error: $e'))),
       ),
     );
   }

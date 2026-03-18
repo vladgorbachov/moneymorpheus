@@ -21,6 +21,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get share => 'Поділитися';
 
   @override
+  String get crypto => 'Крипто';
+
+  @override
+  String get close => 'Закрити';
+
+  @override
   String get searchCurrency => 'Пошук валюти';
 
   @override

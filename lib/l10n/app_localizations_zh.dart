@@ -21,6 +21,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get share => '分享';
 
   @override
+  String get crypto => '加密货币';
+
+  @override
+  String get close => '关闭';
+
+  @override
   String get searchCurrency => '搜索货币';
 
   @override

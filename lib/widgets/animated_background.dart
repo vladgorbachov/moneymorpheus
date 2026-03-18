@@ -39,7 +39,9 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = widget.isDarkMode ? darkBackgroundColor : lightBackgroundColor;
+    final bgColor = widget.isDarkMode
+        ? darkBackgroundColor
+        : lightBackgroundColor;
 
     return Stack(
       children: [
@@ -72,9 +74,11 @@ class _SpherePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final t = progress * 2 * math.pi;
     final sphere1X = size.width * 0.2 + (size.width * 0.3 * math.sin(t));
-    final sphere1Y = size.height * 0.3 + (size.height * 0.2 * math.cos(t * 1.3));
+    final sphere1Y =
+        size.height * 0.3 + (size.height * 0.2 * math.cos(t * 1.3));
     final sphere2X = size.width * 0.7 + (size.width * 0.2 * math.cos(t * 0.8));
-    final sphere2Y = size.height * 0.6 + (size.height * 0.25 * math.sin(t * 1.1));
+    final sphere2Y =
+        size.height * 0.6 + (size.height * 0.25 * math.sin(t * 1.1));
 
     final color1 = isDarkMode ? darkSphereColor1 : lightSphereColor1;
     final color2 = isDarkMode ? darkSphereColor2 : lightSphereColor2;

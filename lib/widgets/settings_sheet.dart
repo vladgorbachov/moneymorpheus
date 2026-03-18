@@ -57,8 +57,9 @@ class SettingsSheet extends ConsumerWidget {
     final hintColor = isDark
         ? Colors.white.withValues(alpha: 0.5)
         : Colors.black.withValues(alpha: 0.5);
-    final sheetColor = (isDark ? Colors.black : Colors.white)
-        .withValues(alpha: 0.3);
+    final sheetColor = (isDark ? Colors.black : Colors.white).withValues(
+      alpha: 0.3,
+    );
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.15)
         : Colors.black.withValues(alpha: 0.08);
@@ -111,12 +112,21 @@ class SettingsSheet extends ConsumerWidget {
                     hintColor,
                   ),
                   const SizedBox(height: 16),
-                  _buildLocaleSelector(context, ref, settings, l10n, textColor, hintColor, isDark),
+                  _buildLocaleSelector(
+                    context,
+                    ref,
+                    settings,
+                    l10n,
+                    textColor,
+                    hintColor,
+                    isDark,
+                  ),
                   const SizedBox(height: 24),
                   _buildDropdown(
                     l10n.baseCurrency,
                     settings.baseCurrency,
-                    (v) => ref.read(settingsProvider.notifier).setBaseCurrency(v),
+                    (v) =>
+                        ref.read(settingsProvider.notifier).setBaseCurrency(v),
                     textColor,
                     hintColor,
                     isDark,
@@ -125,7 +135,8 @@ class SettingsSheet extends ConsumerWidget {
                   _buildDropdown(
                     l10n.row2Currency,
                     settings.row2Currency,
-                    (v) => ref.read(settingsProvider.notifier).setRow2Currency(v),
+                    (v) =>
+                        ref.read(settingsProvider.notifier).setRow2Currency(v),
                     textColor,
                     hintColor,
                     isDark,
@@ -134,7 +145,8 @@ class SettingsSheet extends ConsumerWidget {
                   _buildSwitch(
                     l10n.showRow2,
                     settings.isRow2Visible,
-                    (v) => ref.read(settingsProvider.notifier).setIsRow2Visible(v),
+                    (v) =>
+                        ref.read(settingsProvider.notifier).setIsRow2Visible(v),
                     textColor,
                     hintColor,
                   ),
@@ -142,7 +154,8 @@ class SettingsSheet extends ConsumerWidget {
                   _buildDropdown(
                     l10n.row3Currency,
                     settings.row3Currency,
-                    (v) => ref.read(settingsProvider.notifier).setRow3Currency(v),
+                    (v) =>
+                        ref.read(settingsProvider.notifier).setRow3Currency(v),
                     textColor,
                     hintColor,
                     isDark,
@@ -151,7 +164,8 @@ class SettingsSheet extends ConsumerWidget {
                   _buildSwitch(
                     l10n.showRow3,
                     settings.isRow3Visible,
-                    (v) => ref.read(settingsProvider.notifier).setIsRow3Visible(v),
+                    (v) =>
+                        ref.read(settingsProvider.notifier).setIsRow3Visible(v),
                     textColor,
                     hintColor,
                   ),
@@ -195,16 +209,22 @@ class SettingsSheet extends ConsumerWidget {
           isDarkMode: isDark,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: DropdownButton<String>(
-            value: settings.locale.length >= 2 ? settings.locale.substring(0, 2) : settings.locale,
+            value: settings.locale.length >= 2
+                ? settings.locale.substring(0, 2)
+                : settings.locale,
             isExpanded: true,
-            dropdownColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F5),
+            dropdownColor: isDark
+                ? const Color(0xFF1E1E1E)
+                : const Color(0xFFF5F5F5),
             style: TextStyle(color: textColor, fontSize: 16),
             underline: const SizedBox(),
             items: _supportedLocales
-                .map((e) => DropdownMenuItem<String>(
-                      value: e.key,
-                      child: Text('${e.key} - ${e.value}'),
-                    ))
+                .map(
+                  (e) => DropdownMenuItem<String>(
+                    value: e.key,
+                    child: Text('${e.key} - ${e.value}'),
+                  ),
+                )
                 .toList(),
             onChanged: (v) {
               if (v != null) ref.read(settingsProvider.notifier).setLocale(v);
@@ -234,14 +254,18 @@ class SettingsSheet extends ConsumerWidget {
           child: DropdownButton<String>(
             value: value,
             isExpanded: true,
-            dropdownColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F5),
+            dropdownColor: isDark
+                ? const Color(0xFF1E1E1E)
+                : const Color(0xFFF5F5F5),
             style: TextStyle(color: textColor, fontSize: 16),
             underline: const SizedBox(),
             items: supportedCurrencies
-                .map((e) => DropdownMenuItem<String>(
-                      value: e.key,
-                      child: Text('${e.key} - ${e.value}'),
-                    ))
+                .map(
+                  (e) => DropdownMenuItem<String>(
+                    value: e.key,
+                    child: Text('${e.key} - ${e.value}'),
+                  ),
+                )
                 .toList(),
             onChanged: (v) {
               if (v != null) onChanged(v);

@@ -21,6 +21,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get share => 'Поделиться';
 
   @override
+  String get crypto => 'Крипто';
+
+  @override
+  String get close => 'Закрыть';
+
+  @override
   String get searchCurrency => 'Поиск валюты';
 
   @override
