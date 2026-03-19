@@ -48,7 +48,7 @@ class MoneymorpheusApp extends ConsumerWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.dark(
             surface: darkBackgroundColor,
-            primary: accentColor,
+            primary: darkAccentColor,
           ),
         ),
         themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,

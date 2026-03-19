@@ -33,19 +33,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings => 'Paramètres';
 
   @override
-  String get baseCurrency => 'Devise de base (Ligne 1)';
+  String get baseCurrency => 'Première devise préférée';
 
   @override
-  String get row2Currency => 'Devise ligne 2';
+  String get row2Currency => 'Deuxième devise préférée';
 
   @override
-  String get row3Currency => 'Devise ligne 3';
+  String get row3Currency => 'Troisième devise préférée';
 
   @override
-  String get showRow2 => 'Afficher ligne 2';
+  String get showRow2 => 'Afficher/Masquer';
 
   @override
-  String get showRow3 => 'Afficher ligne 3';
+  String get showRow3 => 'Afficher/Masquer';
 
   @override
   String get done => 'Terminé';

@@ -35,7 +35,8 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
     final surfaceColor = widget.isDarkMode
         ? darkBackgroundColor
         : lightBackgroundColor;
-    final textColor = widget.isDarkMode ? Colors.white : Colors.black;
+    final textColor = widget.isDarkMode ? Colors.white : const Color(0xFF1A1A2E);
+    final accent = widget.isDarkMode ? darkAccentColor : lightAccentColor;
     return Scaffold(
       backgroundColor: surfaceColor,
       appBar: AppBar(
@@ -72,7 +73,7 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
                         setState(() => _selectedIntervalIndex = i);
                       }
                     },
-                    selectedColor: accentColor.withValues(alpha: 0.5),
+                    selectedColor: accent.withValues(alpha: 0.5),
                     labelStyle: TextStyle(
                       color: _selectedIntervalIndex == i
                           ? Colors.white
@@ -86,12 +87,19 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
           ),
           Expanded(
             child: klinesAsync.when(
-              data: (klines) => _CandlestickChart(
-                klines: klines,
-                isDarkMode: widget.isDarkMode,
-              ),
+              data: (klines) => klines.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No chart data',
+                        style: TextStyle(color: textColor),
+                      ),
+                    )
+                  : _CandlestickChart(
+                      klines: klines,
+                      isDarkMode: widget.isDarkMode,
+                    ),
               loading: () =>
-                  Center(child: CircularProgressIndicator(color: accentColor)),
+                  Center(child: CircularProgressIndicator(color: accent)),
               error: (e, _) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),

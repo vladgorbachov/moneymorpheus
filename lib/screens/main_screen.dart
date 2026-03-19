@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/constants.dart';
 import '../providers/calculator_provider.dart';
 import '../providers/settings_provider.dart';
-import '../widgets/animated_background.dart';
 import '../widgets/currency_picker_sheet.dart';
 import '../widgets/currency_row.dart';
 import '../widgets/custom_numpad.dart';
@@ -22,35 +21,57 @@ class MainScreen extends ConsumerWidget {
     return settingsAsync.when(
       data: (settings) {
         final isDark = settings.isDarkMode;
-        final bgColor = isDark ? darkBackgroundColor : lightBackgroundColor;
         final iconColor = isDark
             ? Colors.white.withValues(alpha: 0.9)
             : Colors.black.withValues(alpha: 0.85);
 
         return Scaffold(
-          backgroundColor: bgColor,
-          body: AnimatedBackground(
-            isDarkMode: isDark,
-            child: SafeArea(
-              child: Column(
-                children: [
-                  _buildAppBar(context, iconColor),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 24),
-                          _buildDisplayArea(context, ref, settings, amounts),
-                          const SizedBox(height: 24),
-                          const CustomNumpad(),
-                        ],
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: isDark
+                            ? [darkGradientStart, darkGradientEnd]
+                            : [lightGradientStart, lightGradientEnd],
                       ),
                     ),
+                    child: Column(
+                      children: [
+                        _buildAppBar(context, iconColor),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const SizedBox(height: 16),
+                                _buildDisplayArea(
+                                    context, ref, settings, amounts),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    color: isDark
+                        ? darkBackgroundColor
+                        : lightBackgroundColor,
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                    child: const CustomNumpad(),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -77,7 +98,7 @@ class MainScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            icon: Icon(Icons.menu, color: iconColor),
+            icon: Icon(Icons.menu_rounded, color: iconColor),
             onPressed: () => SettingsSheet.show(context),
           ),
           const MicrophoneButton(),
@@ -110,6 +131,10 @@ class MainScreen extends ConsumerWidget {
             isDarkMode: isDark,
           ),
         ),
+        _SwapButton(
+          isDarkMode: isDark,
+          onTap: () => ref.read(settingsProvider.notifier).swapBaseWithRow2(),
+        ),
         if (settings.isRow2Visible)
           CurrencyRow(
             currencyCode: settings.row2Currency,
@@ -139,6 +164,46 @@ class MainScreen extends ConsumerWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class _SwapButton extends StatelessWidget {
+  final bool isDarkMode;
+  final VoidCallback onTap;
+
+  const _SwapButton({
+    required this.isDarkMode,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = isDarkMode ? accentColor : lightAccentColor;
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Center(
+        child: Material(
+          color: accent.withValues(alpha: 0.4),
+          shape: const CircleBorder(),
+          child: InkWell(
+            onTap: onTap,
+            customBorder: const CircleBorder(),
+            child: Container(
+              width: 56,
+              height: 56,
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.swap_vert_rounded,
+                size: 28,
+                color: iconColor,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

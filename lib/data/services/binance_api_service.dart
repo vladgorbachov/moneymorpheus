@@ -103,7 +103,7 @@ class BinanceApiService {
   Future<List<CryptoKline>> fetchKlines(String symbol, String interval) async {
     final pair = symbol.endsWith('USDT') ? symbol : '${symbol}USDT';
     final uri = Uri.parse(_klinesUrl).replace(
-      queryParameters: {'symbol': pair, 'interval': interval, 'limit': '100'},
+      queryParameters: {'symbol': pair, 'interval': interval, 'limit': '50'},
     );
 
     final response = await http.get(uri);
@@ -115,9 +115,17 @@ class BinanceApiService {
     }
 
     final list = jsonDecode(response.body) as List<dynamic>;
-    return list
-        .map((e) => CryptoKline.fromBinanceArray(e as List<dynamic>))
-        .toList();
+    final result = <CryptoKline>[];
+    for (final item in list) {
+      if (item is List) {
+        try {
+          result.add(CryptoKline.fromBinanceArray(item));
+        } catch (_) {
+          // Skip malformed kline entries
+        }
+      }
+    }
+    return result;
   }
 }
 

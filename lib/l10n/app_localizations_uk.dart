@@ -33,19 +33,19 @@ class AppLocalizationsUk extends AppLocalizations {
   String get settings => 'Налаштування';
 
   @override
-  String get baseCurrency => 'Базова валюта (Рядок 1)';
+  String get baseCurrency => 'Перша бажана валюта';
 
   @override
-  String get row2Currency => 'Валюта рядка 2';
+  String get row2Currency => 'Друга бажана валюта';
 
   @override
-  String get row3Currency => 'Валюта рядка 3';
+  String get row3Currency => 'Третя бажана валюта';
 
   @override
-  String get showRow2 => 'Показати рядок 2';
+  String get showRow2 => 'Показати/Сховати';
 
   @override
-  String get showRow3 => 'Показати рядок 3';
+  String get showRow3 => 'Показати/Сховати';
 
   @override
   String get done => 'Готово';

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'glass_card.dart';
-
 class CurrencyRow extends StatelessWidget {
   final String currencyCode;
   final double amount;
@@ -20,44 +18,61 @@ class CurrencyRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatted = _formatAmount(amount);
     final textColor = isDarkMode
-        ? Colors.white.withValues(alpha: 0.9)
-        : Colors.black.withValues(alpha: 0.85);
+        ? Colors.white.withValues(alpha: 0.95)
+        : const Color(0xFF1A1A2E);
+    final hintColor = isDarkMode
+        ? Colors.white.withValues(alpha: 0.6)
+        : const Color(0xFF1A1A2E).withValues(alpha: 0.5);
 
-    final content = GlassCard(
-      isDarkMode: isDarkMode,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            currencyCode,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: textColor,
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  currencyCode,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: hintColor,
+                  ),
+                ),
+                if (onTap != null) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 20,
+                    color: hintColor,
+                  ),
+                ],
+              ],
             ),
-          ),
-          Text(
-            formatted,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w500,
-              color: textColor,
+            const SizedBox(height: 4),
+            Text(
+              formatted,
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+                letterSpacing: -0.5,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Divider(
+              height: 1,
+              color: isDarkMode
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : const Color(0xFF1A1A2E).withValues(alpha: 0.08),
+            ),
+          ],
+        ),
       ),
     );
-
-    if (onTap != null) {
-      return GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: content,
-      );
-    }
-    return content;
   }
 
   String _formatAmount(double value) {

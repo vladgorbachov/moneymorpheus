@@ -44,12 +44,6 @@ class CustomNumpad extends ConsumerWidget {
           label: l10n.backspace,
           onTap: () => calculator.backspace(),
         ),
-        NumpadButton(
-          label: l10n.swap,
-          onTap: () async {
-            await ref.read(settingsProvider.notifier).swapBaseWithRow2();
-          },
-        ),
         NumpadButton(label: '1', onTap: () => calculator.appendDigit('1')),
         NumpadButton(label: '2', onTap: () => calculator.appendDigit('2')),
         NumpadButton(label: '3', onTap: () => calculator.appendDigit('3')),
@@ -62,6 +56,7 @@ class CustomNumpad extends ConsumerWidget {
         NumpadButton(label: '.', onTap: () => calculator.appendDigit('.')),
         NumpadButton(label: '0', onTap: () => calculator.appendDigit('0')),
         _CryptoButton(l10n: l10n),
+        const SizedBox.shrink(),
       ],
     );
   }

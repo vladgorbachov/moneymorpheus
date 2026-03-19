@@ -21,7 +21,8 @@ class CryptoMarketScreen extends ConsumerWidget {
           _CryptoMarketContent(isDarkMode: settings.isDarkMode, l10n: l10n),
       loading: () => Scaffold(
         backgroundColor: darkBackgroundColor,
-        body: Center(child: CircularProgressIndicator(color: accentColor)),
+        body: Center(
+            child: CircularProgressIndicator(color: darkAccentColor)),
       ),
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
     );

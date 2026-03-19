@@ -33,19 +33,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settings => 'Ajustes';
 
   @override
-  String get baseCurrency => 'Moneda base (Fila 1)';
+  String get baseCurrency => 'Primera moneda preferida';
 
   @override
-  String get row2Currency => 'Moneda fila 2';
+  String get row2Currency => 'Segunda moneda preferida';
 
   @override
-  String get row3Currency => 'Moneda fila 3';
+  String get row3Currency => 'Tercera moneda preferida';
 
   @override
-  String get showRow2 => 'Mostrar fila 2';
+  String get showRow2 => 'Mostrar/Ocultar';
 
   @override
-  String get showRow3 => 'Mostrar fila 3';
+  String get showRow3 => 'Mostrar/Ocultar';
 
   @override
   String get done => 'Listo';

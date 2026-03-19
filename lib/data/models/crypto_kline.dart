@@ -16,13 +16,23 @@ class CryptoKline {
   });
 
   factory CryptoKline.fromBinanceArray(List<dynamic> arr) {
+    if (arr.length < 6) {
+      throw FormatException('Invalid kline array length: ${arr.length}');
+    }
+    final timestamp = int.tryParse(arr[0].toString()) ?? 0;
+    final open = double.tryParse(arr[1].toString()) ?? 0.0;
+    final high = double.tryParse(arr[2].toString()) ?? 0.0;
+    final low = double.tryParse(arr[3].toString()) ?? 0.0;
+    final close = double.tryParse(arr[4].toString()) ?? 0.0;
+    final volume = double.tryParse(arr[5].toString()) ?? 0.0;
+
     return CryptoKline(
-      timestamp: DateTime.fromMillisecondsSinceEpoch(arr[0] as int),
-      open: (arr[1] as num).toDouble(),
-      high: (arr[2] as num).toDouble(),
-      low: (arr[3] as num).toDouble(),
-      close: (arr[4] as num).toDouble(),
-      volume: (arr[5] as num).toDouble(),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(timestamp),
+      open: open,
+      high: high,
+      low: low,
+      close: close,
+      volume: volume,
     );
   }
 }

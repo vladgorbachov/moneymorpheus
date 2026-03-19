@@ -7,7 +7,6 @@ import 'package:moneymorpheus/l10n/app_localizations.dart';
 import '../core/constants.dart';
 import '../core/currencies.dart';
 import '../providers/settings_provider.dart';
-import 'glass_card.dart';
 
 const List<MapEntry<String, String>> _supportedLocales = [
   MapEntry('en', 'English'),
@@ -52,17 +51,20 @@ class SettingsSheet extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final isDark = settings.isDarkMode;
     final textColor = isDark
-        ? Colors.white.withValues(alpha: 0.95)
-        : Colors.black.withValues(alpha: 0.9);
+        ? Colors.white.withValues(alpha: 0.98)
+        : const Color(0xFF0D0D0D);
     final hintColor = isDark
-        ? Colors.white.withValues(alpha: 0.5)
-        : Colors.black.withValues(alpha: 0.5);
-    final sheetColor = (isDark ? Colors.black : Colors.white).withValues(
-      alpha: 0.3,
-    );
+        ? Colors.white.withValues(alpha: 0.55)
+        : const Color(0xFF0D0D0D).withValues(alpha: 0.55);
+    final sheetColor = isDark
+        ? const Color(0xFF1A1335)
+        : const Color(0xFFFAFDFC);
     final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.15)
-        : Colors.black.withValues(alpha: 0.08);
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.04);
+    final dropdownBg = isDark
+        ? const Color(0xFF2A2540)
+        : const Color(0xFFFFFFFF);
 
     return Container(
       constraints: BoxConstraints(
@@ -71,7 +73,7 @@ class SettingsSheet extends ConsumerWidget {
       decoration: BoxDecoration(
         color: sheetColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border.all(color: borderColor, width: 1),
+        border: Border.all(color: borderColor, width: 0.5),
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -110,6 +112,7 @@ class SettingsSheet extends ConsumerWidget {
                     (v) => ref.read(settingsProvider.notifier).setIsDarkMode(v),
                     textColor,
                     hintColor,
+                    isDark,
                   ),
                   const SizedBox(height: 16),
                   _buildLocaleSelector(
@@ -120,6 +123,7 @@ class SettingsSheet extends ConsumerWidget {
                     textColor,
                     hintColor,
                     isDark,
+                    dropdownBg,
                   ),
                   const SizedBox(height: 24),
                   _buildDropdown(
@@ -130,6 +134,7 @@ class SettingsSheet extends ConsumerWidget {
                     textColor,
                     hintColor,
                     isDark,
+                    dropdownBg,
                   ),
                   const SizedBox(height: 16),
                   _buildDropdown(
@@ -140,6 +145,7 @@ class SettingsSheet extends ConsumerWidget {
                     textColor,
                     hintColor,
                     isDark,
+                    dropdownBg,
                   ),
                   const SizedBox(height: 8),
                   _buildSwitch(
@@ -149,6 +155,7 @@ class SettingsSheet extends ConsumerWidget {
                         ref.read(settingsProvider.notifier).setIsRow2Visible(v),
                     textColor,
                     hintColor,
+                    isDark,
                   ),
                   const SizedBox(height: 16),
                   _buildDropdown(
@@ -159,6 +166,7 @@ class SettingsSheet extends ConsumerWidget {
                     textColor,
                     hintColor,
                     isDark,
+                    dropdownBg,
                   ),
                   const SizedBox(height: 8),
                   _buildSwitch(
@@ -168,6 +176,7 @@ class SettingsSheet extends ConsumerWidget {
                         ref.read(settingsProvider.notifier).setIsRow3Visible(v),
                     textColor,
                     hintColor,
+                    isDark,
                   ),
                   const SizedBox(height: 32),
                   SizedBox(
@@ -175,9 +184,13 @@ class SettingsSheet extends ConsumerWidget {
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: (isDark ? Colors.white : Colors.black)
-                            .withValues(alpha: 0.2),
+                        backgroundColor: isDark
+                            ? accentColor.withValues(alpha: 0.3)
+                            : lightAccentColor.withValues(alpha: 0.2),
                         foregroundColor: textColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: Text(l10n.done),
                     ),
@@ -199,23 +212,30 @@ class SettingsSheet extends ConsumerWidget {
     Color textColor,
     Color hintColor,
     bool isDark,
+    Color dropdownBg,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.language, style: TextStyle(fontSize: 14, color: hintColor)),
         const SizedBox(height: 8),
-        GlassCard(
-          isDarkMode: isDark,
+        Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: dropdownBg,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.04),
+            ),
+          ),
           child: DropdownButton<String>(
             value: settings.locale.length >= 2
                 ? settings.locale.substring(0, 2)
                 : settings.locale,
             isExpanded: true,
-            dropdownColor: isDark
-                ? const Color(0xFF1E1E1E)
-                : const Color(0xFFF5F5F5),
+            dropdownColor: dropdownBg,
             style: TextStyle(color: textColor, fontSize: 16),
             underline: const SizedBox(),
             items: _supportedLocales
@@ -242,21 +262,28 @@ class SettingsSheet extends ConsumerWidget {
     Color textColor,
     Color hintColor,
     bool isDark,
+    Color dropdownBg,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(fontSize: 14, color: hintColor)),
         const SizedBox(height: 8),
-        GlassCard(
-          isDarkMode: isDark,
+        Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: dropdownBg,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.04),
+            ),
+          ),
           child: DropdownButton<String>(
             value: value,
             isExpanded: true,
-            dropdownColor: isDark
-                ? const Color(0xFF1E1E1E)
-                : const Color(0xFFF5F5F5),
+            dropdownColor: dropdownBg,
             style: TextStyle(color: textColor, fontSize: 16),
             underline: const SizedBox(),
             items: supportedCurrencies
@@ -282,7 +309,10 @@ class SettingsSheet extends ConsumerWidget {
     void Function(bool) onChanged,
     Color textColor,
     Color hintColor,
+    bool isDark,
   ) {
+    final accent = isDark ? accentColor : lightAccentColor;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -290,8 +320,8 @@ class SettingsSheet extends ConsumerWidget {
         Switch(
           value: value,
           onChanged: onChanged,
-          activeTrackColor: accentColor.withValues(alpha: 0.5),
-          activeThumbColor: accentColor,
+          activeTrackColor: accent.withValues(alpha: 0.5),
+          activeThumbColor: accent,
         ),
       ],
     );

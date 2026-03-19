@@ -33,19 +33,19 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settings => 'Ustawienia';
 
   @override
-  String get baseCurrency => 'Waluta bazowa (Wiersz 1)';
+  String get baseCurrency => 'Pierwsza preferowana waluta';
 
   @override
-  String get row2Currency => 'Waluta wiersza 2';
+  String get row2Currency => 'Druga preferowana waluta';
 
   @override
-  String get row3Currency => 'Waluta wiersza 3';
+  String get row3Currency => 'Trzecia preferowana waluta';
 
   @override
-  String get showRow2 => 'Pokaż wiersz 2';
+  String get showRow2 => 'Pokaż/Ukryj';
 
   @override
-  String get showRow3 => 'Pokaż wiersz 3';
+  String get showRow3 => 'Pokaż/Ukryj';
 
   @override
   String get done => 'Gotowe';

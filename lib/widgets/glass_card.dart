@@ -20,23 +20,19 @@ class GlassCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = isDarkMode ? Brightness.dark : Brightness.light;
     final fillColor = brightness == Brightness.dark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.white.withValues(alpha: 0.5);
-    final borderColor = brightness == Brightness.dark
-        ? Colors.white.withValues(alpha: 0.15)
-        : Colors.black.withValues(alpha: 0.08);
+        ? Colors.white.withValues(alpha: 0.04)
+        : Colors.white.withValues(alpha: 0.25);
 
     return Container(
       margin: margin,
       decoration: BoxDecoration(
         color: fillColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor, width: 1),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Padding(
             padding: padding ?? const EdgeInsets.all(16),
             child: child,

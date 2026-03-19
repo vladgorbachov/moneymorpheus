@@ -33,19 +33,19 @@ class AppLocalizationsRo extends AppLocalizations {
   String get settings => 'Setări';
 
   @override
-  String get baseCurrency => 'Monedă de bază (Rândul 1)';
+  String get baseCurrency => 'Prima monedă preferată';
 
   @override
-  String get row2Currency => 'Moneda rândului 2';
+  String get row2Currency => 'A doua monedă preferată';
 
   @override
-  String get row3Currency => 'Moneda rândului 3';
+  String get row3Currency => 'A treia monedă preferată';
 
   @override
-  String get showRow2 => 'Afișează rândul 2';
+  String get showRow2 => 'Afișare/Ascundere';
 
   @override
-  String get showRow3 => 'Afișează rândul 3';
+  String get showRow3 => 'Afișare/Ascundere';
 
   @override
   String get done => 'Gata';
