@@ -30,6 +30,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchCurrency => 'Search currency';
 
   @override
+  String get searchCrypto => 'Search crypto';
+
+  @override
+  String get searchLanguage => 'Search language';
+
+  @override
   String get settings => 'Settings';
 
   @override

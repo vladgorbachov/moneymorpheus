@@ -30,6 +30,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchCurrency => 'Buscar moneda';
 
   @override
+  String get searchCrypto => 'Buscar cripto';
+
+  @override
+  String get searchLanguage => 'Buscar idioma';
+
+  @override
   String get settings => 'Ajustes';
 
   @override

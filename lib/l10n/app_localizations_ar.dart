@@ -30,6 +30,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchCurrency => 'البحث عن العملة';
 
   @override
+  String get searchCrypto => 'البحث عن العملة المشفرة';
+
+  @override
+  String get searchLanguage => 'البحث عن اللغة';
+
+  @override
   String get settings => 'الإعدادات';
 
   @override

@@ -60,6 +60,9 @@ class BinanceApiService {
             'lastPrice': t.price.toString(),
             'priceChangePercent': t.change24h.toString(),
             'volume': t.volume.toString(),
+            'highPrice': t.high24h.toString(),
+            'lowPrice': t.low24h.toString(),
+            'quoteVolume': t.quoteVolume24h.toString(),
           },
         )
         .toList();

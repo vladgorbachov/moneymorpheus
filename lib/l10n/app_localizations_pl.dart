@@ -30,6 +30,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get searchCurrency => 'Szukaj waluty';
 
   @override
+  String get searchCrypto => 'Szukaj krypto';
+
+  @override
+  String get searchLanguage => 'Szukaj języka';
+
+  @override
   String get settings => 'Ustawienia';
 
   @override

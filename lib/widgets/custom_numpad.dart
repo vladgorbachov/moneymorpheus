@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneymorpheus/l10n/app_localizations.dart';
 
 import '../providers/calculator_provider.dart';
+import '../providers/converter_mode_provider.dart';
 import '../providers/settings_provider.dart';
 import '../screens/crypto_market_screen.dart';
 import 'numpad_button.dart';
@@ -40,6 +41,7 @@ class CustomNumpad extends ConsumerWidget {
       childAspectRatio: 1.85,
       children: [
         NumpadButton(label: l10n.ac, onTap: () => calculator.clear()),
+        _CryptoButton(l10n: l10n),
         NumpadButton(
           label: l10n.backspace,
           onTap: () => calculator.backspace(),
@@ -53,11 +55,20 @@ class CustomNumpad extends ConsumerWidget {
         NumpadButton(label: '7', onTap: () => calculator.appendDigit('7')),
         NumpadButton(label: '8', onTap: () => calculator.appendDigit('8')),
         NumpadButton(label: '9', onTap: () => calculator.appendDigit('9')),
-        NumpadButton(label: '.', onTap: () => calculator.appendDigit('.')),
+        _BtcModeButton(),
         NumpadButton(label: '0', onTap: () => calculator.appendDigit('0')),
-        _CryptoButton(l10n: l10n),
-        const SizedBox.shrink(),
+        NumpadButton(label: '.', onTap: () => calculator.appendDigit('.')),
       ],
+    );
+  }
+}
+
+class _BtcModeButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return NumpadButton(
+      label: '₿',
+      onTap: () => ref.read(converterModeProvider.notifier).toggle(),
     );
   }
 }
@@ -75,7 +86,6 @@ class _CryptoButton extends ConsumerWidget {
         context,
         MaterialPageRoute<void>(builder: (_) => const CryptoMarketScreen()),
       ),
-      isWide: true,
     );
   }
 }

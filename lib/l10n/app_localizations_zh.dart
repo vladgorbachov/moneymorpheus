@@ -30,6 +30,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchCurrency => '搜索货币';
 
   @override
+  String get searchCrypto => '搜索加密货币';
+
+  @override
+  String get searchLanguage => '搜索语言';
+
+  @override
   String get settings => '设置';
 
   @override

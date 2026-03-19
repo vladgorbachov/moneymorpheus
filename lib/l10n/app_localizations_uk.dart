@@ -30,6 +30,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get searchCurrency => 'Пошук валюти';
 
   @override
+  String get searchCrypto => 'Пошук криптовалюти';
+
+  @override
+  String get searchLanguage => 'Пошук мови';
+
+  @override
   String get settings => 'Налаштування';
 
   @override

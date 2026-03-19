@@ -7,6 +7,8 @@
   "crypto": "加密货币",
   "close": "关闭",
   "searchCurrency": "搜索货币",
+  "searchCrypto": "搜索加密货币",
+  "searchLanguage": "搜索语言",
   "settings": "设置",
   "baseCurrency": "首选货币一",
   "row2Currency": "首选货币二",

@@ -30,6 +30,12 @@ class AppLocalizationsRo extends AppLocalizations {
   String get searchCurrency => 'Caută monedă';
 
   @override
+  String get searchCrypto => 'Caută crypto';
+
+  @override
+  String get searchLanguage => 'Caută limbă';
+
+  @override
   String get settings => 'Setări';
 
   @override

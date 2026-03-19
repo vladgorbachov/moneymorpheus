@@ -5,20 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneymorpheus/l10n/app_localizations.dart';
 
 import '../core/constants.dart';
-import '../core/currencies.dart';
+import '../core/metadata/language_metadata.dart';
 import '../providers/settings_provider.dart';
-
-const List<MapEntry<String, String>> _supportedLocales = [
-  MapEntry('en', 'English'),
-  MapEntry('fr', 'Français'),
-  MapEntry('es', 'Español'),
-  MapEntry('ru', 'Русский'),
-  MapEntry('ar', 'العربية'),
-  MapEntry('zh', '中文'),
-  MapEntry('uk', 'Українська'),
-  MapEntry('pl', 'Polski'),
-  MapEntry('ro', 'Română'),
-];
+import 'asset_picker.dart';
+import 'selector_row.dart';
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -62,9 +52,9 @@ class SettingsSheet extends ConsumerWidget {
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.04);
-    final dropdownBg = isDark
-        ? const Color(0xFF2A2540)
-        : const Color(0xFFFFFFFF);
+    final dividerColor = isDark
+        ? Colors.white.withValues(alpha: 0.12)
+        : const Color(0xFF0D0D0D).withValues(alpha: 0.08);
 
     return Container(
       constraints: BoxConstraints(
@@ -97,12 +87,15 @@ class SettingsSheet extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Text(
-                    l10n.settings,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      l10n.settings,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -110,71 +103,91 @@ class SettingsSheet extends ConsumerWidget {
                     l10n.darkMode,
                     settings.isDarkMode,
                     (v) => ref.read(settingsProvider.notifier).setIsDarkMode(v),
-                    textColor,
                     hintColor,
                     isDark,
                   ),
-                  const SizedBox(height: 16),
-                  _buildLocaleSelector(
+                  Divider(height: 1, color: dividerColor),
+                  _buildSelectorRow(
                     context,
                     ref,
-                    settings,
-                    l10n,
-                    textColor,
-                    hintColor,
+                    l10n.language,
+                    LanguageMetadata.displayLabelForCode(settings.locale),
                     isDark,
-                    dropdownBg,
+                    onTap: () => AssetPicker.showLanguage(
+                      context,
+                      currentId: settings.locale.length >= 2
+                          ? settings.locale.substring(0, 2)
+                          : settings.locale,
+                      onSelected: (v) =>
+                          ref.read(settingsProvider.notifier).setLocale(v),
+                      isDarkMode: isDark,
+                      searchHint: l10n.searchLanguage,
+                    ),
                   ),
-                  const SizedBox(height: 24),
-                  _buildDropdown(
+                  Divider(height: 1, color: dividerColor),
+                  _buildSelectorRow(
+                    context,
+                    ref,
                     l10n.baseCurrency,
                     settings.baseCurrency,
-                    (v) =>
-                        ref.read(settingsProvider.notifier).setBaseCurrency(v),
-                    textColor,
-                    hintColor,
                     isDark,
-                    dropdownBg,
+                    onTap: () => AssetPicker.showFiat(
+                      context,
+                      currentId: settings.baseCurrency,
+                      onSelected: (v) => ref
+                          .read(settingsProvider.notifier)
+                          .setBaseCurrency(v),
+                      isDarkMode: isDark,
+                      searchHint: l10n.searchCurrency,
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  _buildDropdown(
+                  Divider(height: 1, color: dividerColor),
+                  _buildSelectorRow(
+                    context,
+                    ref,
                     l10n.row2Currency,
                     settings.row2Currency,
-                    (v) =>
-                        ref.read(settingsProvider.notifier).setRow2Currency(v),
-                    textColor,
-                    hintColor,
                     isDark,
-                    dropdownBg,
+                    onTap: () => AssetPicker.showFiat(
+                      context,
+                      currentId: settings.row2Currency,
+                      onSelected: (v) => ref
+                          .read(settingsProvider.notifier)
+                          .setRow2Currency(v),
+                      isDarkMode: isDark,
+                      searchHint: l10n.searchCurrency,
+                    ),
                   ),
-                  const SizedBox(height: 8),
                   _buildSwitch(
                     l10n.showRow2,
                     settings.isRow2Visible,
                     (v) =>
                         ref.read(settingsProvider.notifier).setIsRow2Visible(v),
-                    textColor,
                     hintColor,
                     isDark,
                   ),
-                  const SizedBox(height: 16),
-                  _buildDropdown(
+                  Divider(height: 1, color: dividerColor),
+                  _buildSelectorRow(
+                    context,
+                    ref,
                     l10n.row3Currency,
                     settings.row3Currency,
-                    (v) =>
-                        ref.read(settingsProvider.notifier).setRow3Currency(v),
-                    textColor,
-                    hintColor,
                     isDark,
-                    dropdownBg,
+                    onTap: () => AssetPicker.showFiat(
+                      context,
+                      currentId: settings.row3Currency,
+                      onSelected: (v) => ref
+                          .read(settingsProvider.notifier)
+                          .setRow3Currency(v),
+                      isDarkMode: isDark,
+                      searchHint: l10n.searchCurrency,
+                    ),
                   ),
-                  const SizedBox(height: 8),
                   _buildSwitch(
                     l10n.showRow3,
                     settings.isRow3Visible,
                     (v) =>
                         ref.read(settingsProvider.notifier).setIsRow3Visible(v),
-                    textColor,
                     hintColor,
                     isDark,
                   ),
@@ -204,102 +217,19 @@ class SettingsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildLocaleSelector(
+  Widget _buildSelectorRow(
     BuildContext context,
-    WidgetRef ref,
-    SettingsState settings,
-    AppLocalizations l10n,
-    Color textColor,
-    Color hintColor,
-    bool isDark,
-    Color dropdownBg,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l10n.language, style: TextStyle(fontSize: 14, color: hintColor)),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            color: dropdownBg,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.04),
-            ),
-          ),
-          child: DropdownButton<String>(
-            value: settings.locale.length >= 2
-                ? settings.locale.substring(0, 2)
-                : settings.locale,
-            isExpanded: true,
-            dropdownColor: dropdownBg,
-            style: TextStyle(color: textColor, fontSize: 16),
-            underline: const SizedBox(),
-            items: _supportedLocales
-                .map(
-                  (e) => DropdownMenuItem<String>(
-                    value: e.key,
-                    child: Text('${e.key} - ${e.value}'),
-                  ),
-                )
-                .toList(),
-            onChanged: (v) {
-              if (v != null) ref.read(settingsProvider.notifier).setLocale(v);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdown(
+    WidgetRef ref, // ignore: avoid_unused_parameters
     String label,
     String value,
-    void Function(String) onChanged,
-    Color textColor,
-    Color hintColor,
-    bool isDark,
-    Color dropdownBg,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(fontSize: 14, color: hintColor)),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            color: dropdownBg,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.04),
-            ),
-          ),
-          child: DropdownButton<String>(
-            value: value,
-            isExpanded: true,
-            dropdownColor: dropdownBg,
-            style: TextStyle(color: textColor, fontSize: 16),
-            underline: const SizedBox(),
-            items: supportedCurrencies
-                .map(
-                  (e) => DropdownMenuItem<String>(
-                    value: e.key,
-                    child: Text('${e.key} - ${e.value}'),
-                  ),
-                )
-                .toList(),
-            onChanged: (v) {
-              if (v != null) onChanged(v);
-            },
-          ),
-        ),
-      ],
+    bool isDark, {
+    required VoidCallback onTap,
+  }) {
+    return SelectorRow(
+      label: label,
+      value: value,
+      onTap: onTap,
+      isDarkMode: isDark,
     );
   }
 
@@ -307,23 +237,25 @@ class SettingsSheet extends ConsumerWidget {
     String label,
     bool value,
     void Function(bool) onChanged,
-    Color textColor,
     Color hintColor,
     bool isDark,
   ) {
     final accent = isDark ? accentColor : lightAccentColor;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(fontSize: 14, color: hintColor)),
-        Switch(
-          value: value,
-          onChanged: onChanged,
-          activeTrackColor: accent.withValues(alpha: 0.5),
-          activeThumbColor: accent,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(fontSize: 14, color: hintColor)),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeTrackColor: accent.withValues(alpha: 0.5),
+            activeThumbColor: accent,
+          ),
+        ],
+      ),
     );
   }
 }

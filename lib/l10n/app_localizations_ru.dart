@@ -30,6 +30,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchCurrency => 'Поиск валюты';
 
   @override
+  String get searchCrypto => 'Поиск криптовалюты';
+
+  @override
+  String get searchLanguage => 'Поиск языка';
+
+  @override
   String get settings => 'Настройки';
 
   @override

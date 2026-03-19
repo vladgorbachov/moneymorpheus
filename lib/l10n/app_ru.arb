@@ -7,6 +7,8 @@
   "crypto": "Крипто",
   "close": "Закрыть",
   "searchCurrency": "Поиск валюты",
+  "searchCrypto": "Поиск криптовалюты",
+  "searchLanguage": "Поиск языка",
   "settings": "Настройки",
   "baseCurrency": "Первая предпочтительная валюта",
   "row2Currency": "Вторая предпочтительная валюта",

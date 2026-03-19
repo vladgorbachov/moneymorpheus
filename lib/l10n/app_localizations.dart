@@ -154,6 +154,18 @@ abstract class AppLocalizations {
   /// **'Search currency'**
   String get searchCurrency;
 
+  /// No description provided for @searchCrypto.
+  ///
+  /// In en, this message translates to:
+  /// **'Search crypto'**
+  String get searchCrypto;
+
+  /// No description provided for @searchLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Search language'**
+  String get searchLanguage;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

@@ -7,6 +7,8 @@
   "crypto": "Crypto",
   "close": "Închide",
   "searchCurrency": "Caută monedă",
+  "searchCrypto": "Caută crypto",
+  "searchLanguage": "Caută limbă",
   "settings": "Setări",
   "baseCurrency": "Prima monedă preferată",
   "row2Currency": "A doua monedă preferată",

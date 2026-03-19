@@ -8,6 +8,9 @@ class SettingsRepository {
   static const _keyBaseCurrency = 'base_currency';
   static const _keyRow2Currency = 'row2_currency';
   static const _keyRow3Currency = 'row3_currency';
+  static const _keyBaseCrypto = 'base_crypto';
+  static const _keyRow2Crypto = 'row2_crypto';
+  static const _keyRow3Crypto = 'row3_crypto';
   static const _keyIsRow2Visible = 'is_row2_visible';
   static const _keyIsRow3Visible = 'is_row3_visible';
   static const _keyIsDarkMode = 'is_dark_mode';
@@ -23,6 +26,18 @@ class SettingsRepository {
 
   Future<String> getRow3Currency() async {
     return (await _prefs.getString(_keyRow3Currency)) ?? 'UAH';
+  }
+
+  Future<String> getBaseCrypto() async {
+    return (await _prefs.getString(_keyBaseCrypto)) ?? 'BTC';
+  }
+
+  Future<String> getRow2Crypto() async {
+    return (await _prefs.getString(_keyRow2Crypto)) ?? 'ETH';
+  }
+
+  Future<String> getRow3Crypto() async {
+    return (await _prefs.getString(_keyRow3Crypto)) ?? 'USDT';
   }
 
   Future<bool> getIsRow2Visible() async {
@@ -51,6 +66,18 @@ class SettingsRepository {
 
   Future<void> setRow3Currency(String value) async {
     await _prefs.setString(_keyRow3Currency, value);
+  }
+
+  Future<void> setBaseCrypto(String value) async {
+    await _prefs.setString(_keyBaseCrypto, value);
+  }
+
+  Future<void> setRow2Crypto(String value) async {
+    await _prefs.setString(_keyRow2Crypto, value);
+  }
+
+  Future<void> setRow3Crypto(String value) async {
+    await _prefs.setString(_keyRow3Crypto, value);
   }
 
   Future<void> setIsRow2Visible(bool value) async {

@@ -3,10 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneymorpheus/l10n/app_localizations.dart';
 
 import '../core/constants.dart';
+import '../core/crypto_logos.dart';
 import '../data/models/crypto_ticker.dart';
 import '../providers/crypto_provider.dart';
+import '../providers/favourites_provider.dart';
 import '../providers/settings_provider.dart';
+import '../widgets/crypto_logo.dart';
 import 'crypto_detail_screen.dart';
+
+const _cryptoMarketBg = Color(0xFF0B1E33);
+const _positiveColor = Color(0xFF2EB872);
+const _negativeColor = Color(0xFFFF5A5A);
+const _favouriteColor = Color(0xFFFFD700);
+const _secondaryTextColor = Color(0xFF8E9AAF);
+const _searchBarBg = Color(0xFF152A3D);
 
 class CryptoMarketScreen extends ConsumerWidget {
   const CryptoMarketScreen({super.key});
@@ -20,11 +30,15 @@ class CryptoMarketScreen extends ConsumerWidget {
       data: (settings) =>
           _CryptoMarketContent(isDarkMode: settings.isDarkMode, l10n: l10n),
       loading: () => Scaffold(
-        backgroundColor: darkBackgroundColor,
-        body: Center(
-            child: CircularProgressIndicator(color: darkAccentColor)),
+        backgroundColor: _cryptoMarketBg,
+        body: Center(child: CircularProgressIndicator(color: _favouriteColor)),
       ),
-      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
+      error: (e, _) => Scaffold(
+        backgroundColor: _cryptoMarketBg,
+        body: Center(
+          child: Text('Error: $e', style: TextStyle(color: _negativeColor)),
+        ),
+      ),
     );
   }
 }
@@ -38,105 +52,125 @@ class _CryptoMarketContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tickersAsync = ref.watch(cryptoFilteredTickersProvider);
-    final theme = isDarkMode
-        ? ThemeData.dark(useMaterial3: true)
-        : ThemeData.light(useMaterial3: true);
-    final surfaceColor = isDarkMode
-        ? darkBackgroundColor
-        : lightBackgroundColor;
-    final cardColor = isDarkMode
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.white.withValues(alpha: 0.9);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-    final secondaryColor = isDarkMode
-        ? Colors.white.withValues(alpha: 0.6)
-        : Colors.black.withValues(alpha: 0.6);
 
-    return Theme(
-      data: theme,
-      child: Scaffold(
-        backgroundColor: surfaceColor,
-        appBar: AppBar(
-          backgroundColor: surfaceColor,
-          elevation: 0,
-          leading: TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.close),
-          ),
-          title: Text(
-            l10n.crypto,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-            ),
-          ),
-          centerTitle: true,
+    return Scaffold(
+      backgroundColor: _cryptoMarketBg,
+      appBar: AppBar(
+        backgroundColor: _cryptoMarketBg,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: _CloseButton(l10n: l10n),
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: TextField(
-                onChanged: (v) =>
-                    ref.read(cryptoSearchQueryProvider.notifier).updateQuery(v),
-                decoration: InputDecoration(
-                  hintText: l10n.searchCurrency,
-                  hintStyle: TextStyle(color: secondaryColor),
-                  prefixIcon: Icon(Icons.search, color: secondaryColor),
-                  filled: true,
-                  fillColor: cardColor,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
+        title: Text(
+          l10n.crypto,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextField(
+              onChanged: (v) =>
+                  ref.read(cryptoSearchQueryProvider.notifier).updateQuery(v),
+              decoration: InputDecoration(
+                hintText: l10n.searchCrypto,
+                hintStyle: TextStyle(color: _secondaryTextColor),
+                prefixIcon: Icon(Icons.search, color: _secondaryTextColor),
+                filled: true,
+                fillColor: _searchBarBg,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
                 ),
-                style: TextStyle(color: textColor),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
+              style: const TextStyle(color: Colors.white),
             ),
-            Expanded(
-              child: tickersAsync.when(
-                data: (tickers) => ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: tickers.length,
-                  itemBuilder: (context, index) {
-                    final ticker = tickers[index];
-                    return _TickerRow(
-                      ticker: ticker,
-                      isDarkMode: isDarkMode,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (_) => CryptoDetailScreen(
-                            symbol: ticker.baseSymbol,
-                            isDarkMode: isDarkMode,
-                          ),
+          ),
+          Expanded(
+            child: tickersAsync.when(
+              data: (tickers) => ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
+                itemCount: tickers.length,
+                itemBuilder: (context, index) {
+                  final ticker = tickers[index];
+                  return _TickerRow(
+                    ticker: ticker,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => CryptoDetailScreen(
+                          symbol: ticker.baseSymbol,
+                          isDarkMode: isDarkMode,
                         ),
                       ),
-                    );
-                  },
-                ),
-                loading: () => Center(
-                  child: CircularProgressIndicator(color: accentColor),
-                ),
-                error: (e, _) => Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      e.toString(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.red.shade400),
                     ),
+                    onStarTap: () => ref
+                        .read(favouritesProvider.notifier)
+                        .toggle(ticker.baseSymbol),
+                    isFavourite: switch (ref.watch(favouritesProvider)) {
+                      AsyncData(:final value) => value.contains(
+                        ticker.baseSymbol,
+                      ),
+                      _ => false,
+                    },
+                  );
+                },
+              ),
+              loading: () => Center(
+                child: CircularProgressIndicator(color: _favouriteColor),
+              ),
+              error: (e, _) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    e.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: _negativeColor),
                   ),
                 ),
               ),
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CloseButton extends StatelessWidget {
+  final AppLocalizations l10n;
+
+  const _CloseButton({required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      child: TextButton(
+        onPressed: () => Navigator.pop(context),
+        style: TextButton.styleFrom(
+          backgroundColor: accentColor.withValues(alpha: 0.3),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
+        child: Text(l10n.close),
       ),
     );
   }
@@ -144,79 +178,104 @@ class _CryptoMarketContent extends ConsumerWidget {
 
 class _TickerRow extends StatelessWidget {
   final CryptoTicker ticker;
-  final bool isDarkMode;
   final VoidCallback onTap;
+  final VoidCallback onStarTap;
+  final bool isFavourite;
 
   const _TickerRow({
     required this.ticker,
-    required this.isDarkMode,
     required this.onTap,
+    required this.onStarTap,
+    required this.isFavourite,
   });
 
   @override
   Widget build(BuildContext context) {
     final isPositive = ticker.change24h >= 0;
-    final changeColor = isPositive ? Colors.green : Colors.red;
-    final cardColor = isDarkMode
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.white.withValues(alpha: 0.9);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final isStable = ticker.baseSymbol == 'USDT' || ticker.change24h == 0;
+    final priceColor = isStable
+        ? Colors.white
+        : (isPositive ? _positiveColor : _negativeColor);
+    final changeBgColor = isPositive ? _positiveColor : _negativeColor;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDarkMode
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.06),
-            width: 1,
-          ),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
+            CryptoLogo(symbol: ticker.baseSymbol, size: 36),
+            const SizedBox(width: 12),
             Expanded(
               flex: 2,
-              child: Text(
-                ticker.baseSymbol,
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    cryptoDisplayName(ticker.baseSymbol),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    ticker.baseSymbol,
+                    style: TextStyle(color: _secondaryTextColor, fontSize: 12),
+                  ),
+                ],
               ),
             ),
             Expanded(
-              flex: 3,
-              child: Text(
-                _formatPrice(ticker.price),
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.end,
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _formatPrice(ticker.price),
+                    style: TextStyle(
+                      color: priceColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _formatVolume(ticker.volume),
+                    style: TextStyle(color: _secondaryTextColor, fontSize: 11),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: changeColor.withValues(alpha: isDarkMode ? 0.3 : 0.15),
-                borderRadius: BorderRadius.circular(6),
+                color: changeBgColor.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 '${ticker.change24h >= 0 ? '+' : ''}${ticker.change24h.toStringAsFixed(2)}%',
                 style: TextStyle(
-                  color: changeColor,
+                  color: isStable ? _secondaryTextColor : Colors.white,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: onStarTap,
+              behavior: HitTestBehavior.opaque,
+              child: Icon(
+                isFavourite ? Icons.star : Icons.star_border,
+                color: isFavourite ? _favouriteColor : _secondaryTextColor,
+                size: 24,
               ),
             ),
           ],
@@ -226,9 +285,17 @@ class _TickerRow extends StatelessWidget {
   }
 
   String _formatPrice(double price) {
-    if (price >= 1000) return price.toStringAsFixed(2);
-    if (price >= 1) return price.toStringAsFixed(4);
-    if (price >= 0.0001) return price.toStringAsFixed(6);
-    return price.toStringAsFixed(8);
+    if (price >= 1000) return '\$${price.toStringAsFixed(2)}';
+    if (price >= 1) return '\$${price.toStringAsFixed(4)}';
+    if (price >= 0.0001) return '\$${price.toStringAsFixed(6)}';
+    return '\$${price.toStringAsFixed(8)}';
+  }
+
+  String _formatVolume(double vol) {
+    if (vol >= 1e12) return '${(vol / 1e12).toStringAsFixed(2)}T';
+    if (vol >= 1e9) return '${(vol / 1e9).toStringAsFixed(2)}B';
+    if (vol >= 1e6) return '${(vol / 1e6).toStringAsFixed(2)}M';
+    if (vol >= 1e3) return '${(vol / 1e3).toStringAsFixed(2)}K';
+    return vol.toStringAsFixed(0);
   }
 }

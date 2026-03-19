@@ -7,6 +7,8 @@
   "crypto": "العملات المشفرة",
   "close": "إغلاق",
   "searchCurrency": "البحث عن العملة",
+  "searchCrypto": "البحث عن العملة المشفرة",
+  "searchLanguage": "البحث عن اللغة",
   "settings": "الإعدادات",
   "baseCurrency": "العملة المفضلة الأولى",
   "row2Currency": "العملة المفضلة الثانية",

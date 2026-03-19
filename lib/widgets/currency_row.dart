@@ -28,41 +28,44 @@ class CurrencyRow extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
                   currencyCode,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontFamily: 'Metropolis',
+                    fontSize: 24,
                     fontWeight: FontWeight.w600,
                     color: hintColor,
                   ),
                 ),
                 if (onTap != null) ...[
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 6),
                   Icon(
                     Icons.keyboard_arrow_down_rounded,
-                    size: 20,
+                    size: 28,
                     color: hintColor,
                   ),
                 ],
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
               formatted,
               style: TextStyle(
-                fontSize: 32,
+                fontFamily: 'Metropolis',
+                fontSize: 48,
                 fontWeight: FontWeight.w600,
                 color: textColor,
                 letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Divider(
               height: 1,
               color: isDarkMode
