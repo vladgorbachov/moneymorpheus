@@ -184,10 +184,10 @@ class _SelectorSheetState extends State<SelectorSheet> {
                 const SizedBox(height: 20),
                 TextField(
                   controller: _searchController,
-                  style: TextStyle(color: _textColor(), fontSize: 16),
+                  style: TextStyle(color: _textColor(), fontSize: 16, fontFamily: 'DejaVuSans'),
                   decoration: InputDecoration(
                     hintText: widget.searchHint,
-                    hintStyle: TextStyle(color: _hintColor()),
+                    hintStyle: TextStyle(color: _hintColor(), fontFamily: 'DejaVuSans'),
                     prefixIcon: Icon(Icons.search, color: _hintColor()),
                     filled: true,
                     fillColor: (widget.isDarkMode ? Colors.white : Colors.black)
@@ -204,7 +204,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                       ? Center(
                           child: Text(
                             'No results',
-                            style: TextStyle(color: _hintColor()),
+                            style: TextStyle(color: _hintColor(), fontFamily: 'DejaVuSans'),
                           ),
                         )
                       : ListWheelScrollView.useDelegate(
@@ -244,6 +244,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                                       Text(
                                         item.label,
                                         style: TextStyle(
+                                          fontFamily: 'DejaVuSans',
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
                                           color: _textColor(),
@@ -259,6 +260,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                                           child: Text(
                                             item.subtitle!,
                                             style: TextStyle(
+                                              fontFamily: 'DejaVuSans',
                                               fontSize: 14,
                                               color: _hintColor(),
                                             ),
@@ -294,7 +296,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                           : Colors.black.withValues(alpha: 0.1),
                       foregroundColor: _textColor(),
                     ),
-                    child: Text(l10n.done),
+                    child: Text(l10n.done, style: const TextStyle(fontFamily: 'Cormorant', fontSize: 24, fontWeight: FontWeight.w700)),
                   ),
                 ),
               ],
