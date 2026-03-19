@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Tappable row for settings: label (hint) + value + arrow, right-aligned.
-/// Matches the visual style of CurrencyRow on the main screen.
 class SelectorRow extends StatelessWidget {
   final String label;
   final String value;
@@ -22,33 +20,41 @@ class SelectorRow extends StatelessWidget {
         ? Colors.white.withValues(alpha: 0.95)
         : const Color(0xFF1A1A2E);
     final hintColor = isDarkMode
-        ? Colors.white.withValues(alpha: 0.6)
-        : const Color(0xFF1A1A2E).withValues(alpha: 0.5);
+        ? Colors.white.withValues(alpha: 0.68)
+        : const Color(0xFF1A1A2E).withValues(alpha: 0.54);
 
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 14),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Metropolis',
-                fontSize: 14,
-                color: hintColor,
+            Expanded(
+              child: Text(
+                label,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontFamily: 'Cormorant',
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: hintColor,
+                ),
               ),
             ),
             const SizedBox(width: 16),
-            Text(
-              value,
-              style: TextStyle(
-                fontFamily: 'Metropolis',
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: textColor,
+            Flexible(
+              child: Text(
+                value,
+                textAlign: TextAlign.right,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: 'Cormorant',
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  color: textColor,
+                ),
               ),
             ),
             if (onTap != null) ...[

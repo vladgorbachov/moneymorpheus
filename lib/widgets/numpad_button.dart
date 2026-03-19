@@ -4,60 +4,56 @@ import 'package:flutter/services.dart';
 import '../core/constants.dart';
 
 class NumpadButton extends StatelessWidget {
-  final String label;
+  final String? label;
+  final Widget? child;
   final VoidCallback onTap;
-  final bool isWide;
+  final bool compactTopRow;
+  final bool glassHighlight;
+  final double? fontSize;
+  final FontWeight fontWeight;
 
   const NumpadButton({
     super.key,
-    required this.label,
+    this.label,
+    this.child,
     required this.onTap,
-    this.isWide = false,
-  });
+    this.compactTopRow = false,
+    this.glassHighlight = false,
+    this.fontSize,
+    this.fontWeight = FontWeight.w700,
+  }) : assert(label != null || child != null);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark
-        ? Colors.white.withValues(alpha: 0.95)
-        : Colors.black.withValues(alpha: 0.9);
-    final bgColor = isDark
-        ? Colors.white.withValues(alpha: 0.05)
-        : Colors.white.withValues(alpha: 0.05);
-
-    final borderColor = isDark
-        ? accentColor.withValues(alpha: 0.35)
-        : lightAccentColor.withValues(alpha: 0.25);
-    final glowShadows = isDark
-        ? [
-            BoxShadow(
-              color: accentColor.withValues(alpha: 0.15),
-              blurRadius: 8,
-              spreadRadius: 0,
-            ),
-          ]
-        : <BoxShadow>[];
+        ? Colors.white.withValues(alpha: 0.98)
+        : Colors.black.withValues(alpha: 0.82);
+    final effectiveFontSize = fontSize ?? (compactTopRow ? 26 : 34);
 
     return GestureDetector(
       onTapDown: (_) => HapticFeedback.lightImpact(),
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor, width: 1),
-          boxShadow: glowShadows,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        decoration: glassButtonDecoration(
+          isDarkMode: isDark,
+          borderRadius: BorderRadius.circular(compactTopRow ? 18 : 22),
+          highlight: glassHighlight,
         ),
         child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Metropolis',
-              fontSize: 36,
-              fontWeight: FontWeight.w500,
-              color: textColor,
-            ),
-          ),
+          child: child ??
+              Text(
+                label!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Merriweather',
+                  fontSize: effectiveFontSize,
+                  fontWeight: fontWeight,
+                  color: textColor,
+                  letterSpacing: 0.6,
+                ),
+              ),
         ),
       ),
     );

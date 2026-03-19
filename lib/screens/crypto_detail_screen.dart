@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../core/constants.dart';
 import '../data/models/crypto_kline.dart';
 import '../data/models/crypto_ticker.dart';
 import '../providers/crypto_provider.dart';
 import '../providers/favourites_provider.dart';
 
-const _bgColor = Color(0xFF0B1E33);
 const _positiveColor = Color(0xFF2EB872);
 const _negativeColor = Color(0xFFFF5A5A);
 const _favouriteColor = Color(0xFFFFD700);
-const _secondaryColor = Color(0xFF8E9AAF);
+const _secondaryColor = Color(0xFFB9BDD2);
 const _tabActiveColor = Color(0xFFFFD700);
 
 const _intervals = ['15m', '1h', '4h', '1d', '1w'];
@@ -48,88 +48,131 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
     };
 
     return Scaffold(
-      backgroundColor: _bgColor,
-      appBar: AppBar(
-        backgroundColor: _bgColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          '${widget.symbol}/USDT',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              isFavourite ? Icons.star : Icons.star_border,
-              color: isFavourite ? _favouriteColor : _secondaryColor,
-            ),
-            onPressed: () =>
-                ref.read(favouritesProvider.notifier).toggle(widget.symbol),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            tickerAsync.when(
-              data: (ticker) => ticker != null
-                  ? _PriceSection(ticker: ticker)
-                  : const SizedBox.shrink(),
-              loading: () => const Padding(
-                padding: EdgeInsets.all(24),
-                child: Center(
-                  child: CircularProgressIndicator(color: _favouriteColor),
-                ),
-              ),
-              error: (e, _) => Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  e.toString(),
-                  style: TextStyle(color: _negativeColor, fontSize: 12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            _TimeframeBar(
-              selectedIndex: _selectedIntervalIndex,
-              onSelected: (i) => setState(() => _selectedIntervalIndex = i),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 280,
-              child: klinesAsync.when(
-                data: (klines) => klines.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No chart data',
-                          style: TextStyle(color: _secondaryColor),
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: buildThemedWallpaper(widget.isDarkMode),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 22),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    _GlassIconButton(
+                      isDarkMode: widget.isDarkMode,
+                      icon: Icons.arrow_back_rounded,
+                      onTap: () => Navigator.pop(context),
+                    ),
+                    Expanded(
+                      child: Text(
+                        '${widget.symbol}/USDT',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 24,
+                          fontFamily: 'DejaVuSans',
                         ),
-                      )
-                    : _CandlestickChart(
-                        klines: klines,
-                        isDarkMode: widget.isDarkMode,
                       ),
-                loading: () => Center(
-                  child: CircularProgressIndicator(color: _favouriteColor),
+                    ),
+                    _GlassIconButton(
+                      isDarkMode: widget.isDarkMode,
+                      icon: isFavourite ? Icons.star_rounded : Icons.star_border_rounded,
+                      iconColor: isFavourite ? _favouriteColor : _secondaryColor,
+                      onTap: () => ref.read(favouritesProvider.notifier).toggle(widget.symbol),
+                    ),
+                  ],
                 ),
-                error: (e, _) => Center(
-                  child: Text(
-                    e.toString(),
-                    style: TextStyle(color: _negativeColor, fontSize: 12),
+                const SizedBox(height: 18),
+                tickerAsync.when(
+                  data: (ticker) => ticker != null ? _PriceSection(ticker: ticker) : const SizedBox.shrink(),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(child: CircularProgressIndicator(color: _favouriteColor)),
+                  ),
+                  error: (e, _) => Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(e.toString(), style: const TextStyle(color: _negativeColor, fontSize: 12)),
                   ),
                 ),
-              ),
+                const SizedBox(height: 18),
+                _TimeframeBar(
+                  selectedIndex: _selectedIntervalIndex,
+                  isDarkMode: widget.isDarkMode,
+                  onSelected: (i) => setState(() => _selectedIntervalIndex = i),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  height: 392,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: widget.isDarkMode ? 0.06 : 0.16),
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+                    ),
+                    child: klinesAsync.when(
+                      data: (klines) => klines.isEmpty
+                          ? Center(
+                              child: Text(
+                                'No chart data',
+                                style: TextStyle(color: _secondaryColor.withValues(alpha: 0.9)),
+                              ),
+                            )
+                          : _CandlestickChart(
+                              klines: klines,
+                              isDarkMode: widget.isDarkMode,
+                            ),
+                      loading: () => const Center(child: CircularProgressIndicator(color: _favouriteColor)),
+                      error: (e, _) => Center(
+                        child: Text(
+                          e.toString(),
+                          style: const TextStyle(color: _negativeColor, fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GlassIconButton extends StatelessWidget {
+  final bool isDarkMode;
+  final IconData icon;
+  final Color? iconColor;
+  final VoidCallback onTap;
+
+  const _GlassIconButton({
+    required this.isDarkMode,
+    required this.icon,
+    required this.onTap,
+    this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 56,
+      height: 56,
+      child: DecoratedBox(
+        decoration: glassButtonDecoration(
+          isDarkMode: isDarkMode,
+          borderRadius: BorderRadius.circular(18),
+          highlight: true,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: onTap,
+            child: Icon(icon, color: iconColor ?? Colors.white, size: 26),
+          ),
         ),
       ),
     );
@@ -145,12 +188,15 @@ class _PriceSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isPositive = ticker.change24h >= 0;
     final isStable = ticker.baseSymbol == 'USDT' || ticker.change24h == 0;
-    final changeColor = isStable
-        ? _secondaryColor
-        : (isPositive ? _positiveColor : _negativeColor);
+    final changeColor = isStable ? _secondaryColor : (isPositive ? _positiveColor : _negativeColor);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -159,54 +205,32 @@ class _PriceSection extends StatelessWidget {
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 32,
+              fontSize: 40,
+              fontFamily: 'Metropolis',
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
+          Text(
+            '${ticker.change24h >= 0 ? '+' : ''}${ticker.change24h.toStringAsFixed(2)}%',
+            style: TextStyle(
+              color: changeColor,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Metropolis',
+            ),
+          ),
+          const SizedBox(height: 18),
           Row(
             children: [
-              Text(
-                '${ticker.change24h >= 0 ? '+' : ''}${ticker.change24h.toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color: changeColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              Expanded(child: _StatItem(label: '24h High', value: _formatPrice(ticker.high24h))),
+              Expanded(child: _StatItem(label: '24h Low', value: _formatPrice(ticker.low24h))),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                child: _StatItem(
-                  label: '24h High',
-                  value: _formatPrice(ticker.high24h),
-                ),
-              ),
-              Expanded(
-                child: _StatItem(
-                  label: '24h Low',
-                  value: _formatPrice(ticker.low24h),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: _StatItem(
-                  label: '24h Vol (${ticker.baseSymbol})',
-                  value: _formatVolume(ticker.volume),
-                ),
-              ),
-              Expanded(
-                child: _StatItem(
-                  label: '24h Vol (USDT)',
-                  value: _formatVolume(ticker.quoteVolume24h),
-                ),
-              ),
+              Expanded(child: _StatItem(label: '24h Vol (${ticker.baseSymbol})', value: _formatVolume(ticker.volume))),
+              Expanded(child: _StatItem(label: '24h Vol (USDT)', value: _formatVolume(ticker.quoteVolume24h))),
             ],
           ),
         ],
@@ -241,14 +265,18 @@ class _StatItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: _secondaryColor, fontSize: 11)),
-        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(color: _secondaryColor, fontSize: 13, fontFamily: 'DejaVuSans'),
+        ),
+        const SizedBox(height: 4),
         Text(
           value,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Metropolis',
           ),
           overflow: TextOverflow.ellipsis,
         ),
@@ -259,39 +287,43 @@ class _StatItem extends StatelessWidget {
 
 class _TimeframeBar extends StatelessWidget {
   final int selectedIndex;
+  final bool isDarkMode;
   final void Function(int) onSelected;
 
-  const _TimeframeBar({required this.selectedIndex, required this.onSelected});
+  const _TimeframeBar({required this.selectedIndex, required this.onSelected, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: List.generate(
-          _intervals.length,
-          (i) => GestureDetector(
-            onTap: () => onSelected(i),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: selectedIndex == i
-                        ? _tabActiveColor
-                        : Colors.transparent,
-                    width: 3,
-                  ),
-                ),
+    return Row(
+      children: List.generate(
+        _intervals.length,
+        (i) => Padding(
+          padding: EdgeInsets.only(right: i == _intervals.length - 1 ? 0 : 10),
+          child: SizedBox(
+            width: 58,
+            height: 42,
+            child: DecoratedBox(
+              decoration: glassButtonDecoration(
+                isDarkMode: isDarkMode,
+                borderRadius: BorderRadius.circular(14),
+                highlight: selectedIndex == i,
               ),
-              child: Text(
-                _intervals[i],
-                style: TextStyle(
-                  color: selectedIndex == i ? Colors.white : _secondaryColor,
-                  fontSize: 14,
-                  fontWeight: selectedIndex == i
-                      ? FontWeight.w600
-                      : FontWeight.normal,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => onSelected(i),
+                  child: Center(
+                    child: Text(
+                      _intervals[i],
+                      style: TextStyle(
+                        color: selectedIndex == i ? Colors.white : _secondaryColor,
+                        fontSize: 14,
+                        fontWeight: selectedIndex == i ? FontWeight.w700 : FontWeight.w500,
+                        fontFamily: 'Merriweather',
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -310,21 +342,22 @@ class _CandlestickChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const gridColor = Color(0xFF1E3A4D);
-    const axisColor = Color(0xFF8E9AAF);
+    final gridColor = isDarkMode ? Colors.white.withValues(alpha: 0.10) : Colors.black.withValues(alpha: 0.08);
+    final axisColor = isDarkMode ? _secondaryColor : Colors.black54;
 
     return SfCartesianChart(
       margin: const EdgeInsets.all(12),
+      backgroundColor: Colors.transparent,
       plotAreaBorderWidth: 0,
       primaryXAxis: DateTimeAxis(
-        majorGridLines: const MajorGridLines(color: gridColor),
-        axisLine: const AxisLine(color: gridColor),
-        labelStyle: const TextStyle(color: axisColor, fontSize: 10),
+        majorGridLines: MajorGridLines(color: gridColor),
+        axisLine: AxisLine(color: gridColor),
+        labelStyle: TextStyle(color: axisColor, fontSize: 10, fontFamily: 'DejaVuSans'),
       ),
       primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(color: gridColor),
-        axisLine: const AxisLine(color: gridColor),
-        labelStyle: const TextStyle(color: axisColor, fontSize: 10),
+        majorGridLines: MajorGridLines(color: gridColor),
+        axisLine: AxisLine(color: gridColor),
+        labelStyle: TextStyle(color: axisColor, fontSize: 10, fontFamily: 'DejaVuSans'),
       ),
       tooltipBehavior: TooltipBehavior(enable: true),
       zoomPanBehavior: ZoomPanBehavior(
