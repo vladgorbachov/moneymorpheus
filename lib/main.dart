@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:moneymorpheus/l10n/app_localizations.dart';
+import 'package:fluxly/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
 
@@ -16,13 +16,13 @@ Future<void> main() async {
   await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
     legacySharedPreferencesInstance: legacyPrefs,
     sharedPreferencesAsyncOptions: const SharedPreferencesOptions(),
-    migrationCompletedKey: 'moneymorpheus_migration_completed',
+    migrationCompletedKey: 'fluxly_migration_completed',
   );
-  runApp(const ProviderScope(child: MoneymorpheusApp()));
+  runApp(const ProviderScope(child: FluxlyApp()));
 }
 
-class MoneymorpheusApp extends ConsumerWidget {
-  const MoneymorpheusApp({super.key});
+class FluxlyApp extends ConsumerWidget {
+  const FluxlyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +30,7 @@ class MoneymorpheusApp extends ConsumerWidget {
 
     return settingsAsync.when(
       data: (settings) => MaterialApp(
-        title: 'moneymorpheus',
+        title: 'Fluxly',
         debugShowCheckedModeBanner: false,
         locale: settings.localeValue,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -38,9 +38,9 @@ class MoneymorpheusApp extends ConsumerWidget {
         theme: ThemeData(
           brightness: Brightness.light,
           useMaterial3: true,
-          fontFamily: 'Roboto',
+          fontFamily: kLarazFontFamily,
           textTheme: ThemeData.light().textTheme.apply(
-            fontFamily: 'Roboto',
+            fontFamily: kLarazFontFamily,
           ),
           colorScheme: ColorScheme.light(
             surface: lightBackgroundColor,
@@ -50,8 +50,8 @@ class MoneymorpheusApp extends ConsumerWidget {
         darkTheme: ThemeData(
           brightness: Brightness.dark,
           useMaterial3: true,
-          fontFamily: 'Roboto',
-          textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'Roboto'),
+          fontFamily: kLarazFontFamily,
+          textTheme: ThemeData.dark().textTheme.apply(fontFamily: kLarazFontFamily),
           colorScheme: ColorScheme.dark(
             surface: darkBackgroundColor,
             primary: darkAccentColor,

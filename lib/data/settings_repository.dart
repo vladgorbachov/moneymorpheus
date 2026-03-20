@@ -15,8 +15,6 @@ class SettingsRepository {
   static const _keyIsRow3Visible = 'is_row3_visible';
   static const _keyIsDarkMode = 'is_dark_mode';
   static const _keyLocale = 'locale';
-  static const _keySpeechOutputEnabled = 'speech_output_enabled';
-  static const _keyVoiceInterpretation = 'voice_interpretation';
 
   Future<String> getBaseCurrency() async {
     return (await _prefs.getString(_keyBaseCurrency)) ?? 'EUR';
@@ -58,15 +56,6 @@ class SettingsRepository {
     return (await _prefs.getString(_keyLocale)) ?? 'en';
   }
 
-  Future<bool> getSpeechOutputEnabled() async {
-    return (await _prefs.getBool(_keySpeechOutputEnabled)) ?? true;
-  }
-
-  Future<String> getVoiceInterpretation() async {
-    return (await _prefs.getString(_keyVoiceInterpretation)) ??
-        VoiceInterpretationMode.openAi.storageValue;
-  }
-
   Future<void> setBaseCurrency(String value) async {
     await _prefs.setString(_keyBaseCurrency, value);
   }
@@ -105,33 +94,5 @@ class SettingsRepository {
 
   Future<void> setLocale(String value) async {
     await _prefs.setString(_keyLocale, value);
-  }
-
-  Future<void> setSpeechOutputEnabled(bool value) async {
-    await _prefs.setBool(_keySpeechOutputEnabled, value);
-  }
-
-  Future<void> setVoiceInterpretation(String value) async {
-    await _prefs.setString(_keyVoiceInterpretation, value);
-  }
-}
-
-/// How spoken phrases are turned into amounts and currency pairs.
-enum VoiceInterpretationMode {
-  /// OpenAI API (multilingual); requires `OPENAI_API_KEY` in `.env`.
-  openAi,
-
-  /// Android speech engine only: extracts a number into the calculator (legacy).
-  deviceRecognizer,
-}
-
-extension VoiceInterpretationModeStorage on VoiceInterpretationMode {
-  String get storageValue => name;
-
-  static VoiceInterpretationMode parse(String? raw) {
-    for (final v in VoiceInterpretationMode.values) {
-      if (v.name == raw) return v;
-    }
-    return VoiceInterpretationMode.openAi;
   }
 }

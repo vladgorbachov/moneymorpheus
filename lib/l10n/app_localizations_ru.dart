@@ -9,7 +9,7 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get ac => 'AC';
+  String get ac => 'C';
 
   @override
   String get backspace => '⌫';
@@ -76,23 +76,4 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cryptoSortSymbolDesc => 'Символ Я–А';
-
-  @override
-  String get speakConversionResult => 'Озвучивать результат';
-
-  @override
-  String get voiceUnderstanding => 'Голосовой перевод';
-
-  @override
-  String get voiceOpenAiLabel => 'OpenAI (любой язык)';
-
-  @override
-  String get voiceDeviceLabel => 'Устройство: только число';
-
-  @override
-  String get voiceCouldNotParse => 'Не разобрал фразу; введено только число';
-
-  @override
-  String get voiceAddOpenAiKeyHint =>
-      'Добавьте OPENAI_API_KEY в .env для полного голосового ввода';
 }

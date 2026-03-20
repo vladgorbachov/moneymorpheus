@@ -1,12 +1,14 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:moneymorpheus/l10n/app_localizations.dart';
+import 'package:fluxly/l10n/app_localizations.dart';
 
+import '../core/constants.dart';
 import '../providers/calculator_provider.dart';
 import '../providers/converter_mode_provider.dart';
 import '../providers/settings_provider.dart';
 import '../screens/crypto_market_screen.dart';
-import 'bitcoin_badge.dart';
 import 'numpad_button.dart';
 
 class CustomNumpad extends ConsumerWidget {
@@ -32,6 +34,8 @@ class CustomNumpad extends ConsumerWidget {
     SettingsState settings,
     AppLocalizations l10n,
   ) {
+    final isDark = settings.isDarkMode;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         const spacing = 12.0;
@@ -57,6 +61,9 @@ class CustomNumpad extends ConsumerWidget {
           );
         }
 
+        final digitColor =
+            isDark ? Colors.white : refLightKeypadTeal;
+
         return Container(
           padding: const EdgeInsets.fromLTRB(8, padT, 8, padB),
           color: Colors.transparent,
@@ -68,19 +75,33 @@ class CustomNumpad extends ConsumerWidget {
                   compactTopRow: true,
                   fontSize: 27,
                   flatConverterStyle: true,
-                  converterTone: ConverterKeyTone.clear,
+                  converterTone: ConverterKeyTone.digit,
                   onTap: calculator.clear,
                 ),
-                _CryptoButton(l10n: l10n),
+                _CryptoNavButton(
+                  topHeight: topHeight,
+                  isDark: isDark,
+                ),
                 NumpadButton(
-                  label: l10n.backspace,
                   compactTopRow: true,
                   fontSize: 23,
                   flatConverterStyle: true,
                   converterTone: ConverterKeyTone.auxiliary,
                   onTap: calculator.backspace,
+                  child: Icon(
+                    Icons.backspace_outlined,
+                    size: 26,
+                    color: digitColor,
+                  ),
                 ),
               ], topHeight),
+              SizedBox(
+                height: 20,
+                width: double.infinity,
+                child: CustomPaint(
+                  painter: _GlassFoldSeparatorPainter(isDark: isDark),
+                ),
+              ),
               const SizedBox(height: spacing),
               row([
                 NumpadButton(
@@ -137,7 +158,7 @@ class CustomNumpad extends ConsumerWidget {
               ], standardHeight),
               const SizedBox(height: spacing),
               row([
-                const _BtcModeButton(),
+                _ModeToggleButton(digitColor: digitColor),
                 NumpadButton(
                   label: '0',
                   flatConverterStyle: true,
@@ -157,8 +178,11 @@ class CustomNumpad extends ConsumerWidget {
   }
 }
 
-class _BtcModeButton extends ConsumerWidget {
-  const _BtcModeButton();
+/// Fiat ↔ crypto mode: swap arrows, same tone as keypad digits.
+class _ModeToggleButton extends ConsumerWidget {
+  const _ModeToggleButton({required this.digitColor});
+
+  final Color digitColor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -166,28 +190,203 @@ class _BtcModeButton extends ConsumerWidget {
       flatConverterStyle: true,
       converterTone: ConverterKeyTone.digit,
       onTap: () => ref.read(converterModeProvider.notifier).toggle(),
-      child: const Center(child: BitcoinBadge(size: 34)),
+      child: Icon(
+        Icons.swap_horiz_rounded,
+        size: 34,
+        color: digitColor,
+      ),
     );
   }
 }
 
-class _CryptoButton extends ConsumerWidget {
-  final AppLocalizations l10n;
+/// Rounded stadium: artwork fills the button at native aspect ratio (letterboxed).
+class _CryptoNavButton extends ConsumerWidget {
+  const _CryptoNavButton({
+    required this.topHeight,
+    required this.isDark,
+  });
 
-  const _CryptoButton({required this.l10n});
+  final double topHeight;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return NumpadButton(
-      label: 'CRYPTO',
-      compactTopRow: true,
-      fontSize: 18,
-      flatConverterStyle: true,
-      converterTone: ConverterKeyTone.auxiliary,
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute<void>(builder: (_) => const CryptoMarketScreen()),
+    final h = (topHeight * 0.82).clamp(40.0, 64.0);
+    final borderColor = Colors.white.withValues(alpha: isDark ? 0.38 : 0.42);
+
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute<void>(builder: (_) => const CryptoMarketScreen()),
+          ),
+          child: Ink(
+            height: h,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: borderColor, width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: SizedBox.expand(
+                child: _BitcoinDownArtwork(isDark: isDark),
+              ),
+            ),
+          ),
+        ),
       ),
     );
+  }
+}
+
+/// Fills parent; [BoxFit.contain] keeps ratio. Light/dark tints for visibility.
+/// JPEG background cannot be removed in code; use PNG with alpha for full transparency.
+class _BitcoinDownArtwork extends StatelessWidget {
+  const _BitcoinDownArtwork({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final base = Image.asset(
+      'assets/bitcoindown03_generated.jpg',
+      fit: BoxFit.contain,
+      alignment: Alignment.center,
+      gaplessPlayback: true,
+      filterQuality: FilterQuality.medium,
+    );
+
+    if (isDark) {
+      return ColorFiltered(
+        colorFilter: const ColorFilter.matrix(<double>[
+          1.12, 0, 0, 0, 18,
+          0, 1.1, 0, 0, 18,
+          0, 0, 1.14, 0, 22,
+          0, 0, 0, 1, 0,
+        ]),
+        child: base,
+      );
+    }
+
+    return ColorFiltered(
+      colorFilter: ColorFilter.mode(
+        refLightKeypadTeal.withValues(alpha: 0.88),
+        BlendMode.multiply,
+      ),
+      child: base,
+    );
+  }
+}
+
+/// Glass-like fold line with a center dip (under the crypto nav pill).
+class _GlassFoldSeparatorPainter extends CustomPainter {
+  _GlassFoldSeparatorPainter({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final mid = w / 2;
+    final yTop = h * 0.35;
+    final yDip = h * 0.92;
+    final dipHalfWidth = w * 0.16;
+    final leftX = mid - dipHalfWidth;
+    final rightX = mid + dipHalfWidth;
+
+    final path = Path()
+      ..moveTo(0, yTop)
+      ..lineTo(leftX, yTop)
+      ..cubicTo(
+        leftX + dipHalfWidth * 0.35,
+        yTop,
+        mid - dipHalfWidth * 0.25,
+        yDip,
+        mid,
+        yDip,
+      )
+      ..cubicTo(
+        mid + dipHalfWidth * 0.25,
+        yDip,
+        rightX - dipHalfWidth * 0.35,
+        yTop,
+        rightX,
+        yTop,
+      )
+      ..lineTo(w, yTop);
+
+    final stroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..strokeCap = StrokeCap.round
+      ..shader = LinearGradient(
+        colors: [
+          Colors.white.withValues(alpha: isDark ? 0.08 : 0.2),
+          Colors.white.withValues(alpha: isDark ? 0.42 : 0.72),
+          Colors.white.withValues(alpha: isDark ? 0.1 : 0.22),
+        ],
+        stops: const [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
+
+    canvas.drawPath(path, stroke);
+
+    final glow = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5
+      ..color = Colors.white.withValues(alpha: isDark ? 0.06 : 0.12)
+      ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 3);
+    canvas.drawPath(path, glow);
+
+    final fill = Path()
+      ..moveTo(0, yTop)
+      ..lineTo(leftX, yTop)
+      ..cubicTo(
+        leftX + dipHalfWidth * 0.35,
+        yTop,
+        mid - dipHalfWidth * 0.25,
+        yDip,
+        mid,
+        yDip,
+      )
+      ..cubicTo(
+        mid + dipHalfWidth * 0.25,
+        yDip,
+        rightX - dipHalfWidth * 0.35,
+        yTop,
+        rightX,
+        yTop,
+      )
+      ..lineTo(w, yTop)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+
+    final fillPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.white.withValues(alpha: isDark ? 0.04 : 0.1),
+          Colors.transparent,
+        ],
+      ).createShader(Rect.fromLTWH(0, yTop, w, h - yTop));
+    canvas.drawPath(fill, fillPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _GlassFoldSeparatorPainter oldDelegate) {
+    return oldDelegate.isDark != isDark;
   }
 }

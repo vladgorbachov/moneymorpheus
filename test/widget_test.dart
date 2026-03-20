@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:moneymorpheus/widgets/numpad_button.dart';
+import 'package:fluxly/widgets/numpad_button.dart';
 
 void main() {
   testWidgets('NumpadButton renders', (WidgetTester tester) async {

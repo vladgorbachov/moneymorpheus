@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// Custom digits for converter amounts and flat numpad (see `pubspec.yaml` fonts).
+const String kLarazFontFamily = 'LARAZ';
+
+/// Max absolute value for converter input and display (inclusive).
+const double kMaxConverterAmount = 999999999;
+
 // Reference converter UI (light): teal top → mint / light green bottom (~2 tones darker vs prior).
 const Color refLightGradientTop = Color(0xFF1BA8BE);
 const Color refLightGradientMid = Color(0xFFA8D8C8);

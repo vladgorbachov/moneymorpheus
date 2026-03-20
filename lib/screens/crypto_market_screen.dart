@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:moneymorpheus/l10n/app_localizations.dart';
+import 'package:fluxly/l10n/app_localizations.dart';
 
 import '../core/constants.dart';
 import '../core/crypto_logos.dart';
@@ -98,7 +98,7 @@ class _CryptoMarketContent extends ConsumerWidget {
                               child: Text(
                                 l10n.close,
                                 style: TextStyle(
-                                  fontFamily: 'Merriweather',
+                                  fontFamily: kLarazFontFamily,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white.withValues(alpha: 0.96),
@@ -361,7 +361,7 @@ class _TickerRow extends StatelessWidget {
                             color: priceColor,
                             fontWeight: FontWeight.w700,
                             fontSize: 19,
-                            fontFamily: 'Metropolis',
+                            fontFamily: kLarazFontFamily,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),

@@ -3,8 +3,6 @@
     <!-- Network: Binance API and asset images -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- Speech input on converter screen -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <!--
       Preferences and app data use private app storage (no runtime permission on API 23+).
       Legacy broad storage scope for older devices if plugins request it:
@@ -17,7 +15,7 @@
         android:maxSdkVersion="28"
         tools:ignore="ScopedStorage" />
     <application
-        android:label="moneymorpheus"
+        android:label="Fluxly"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -5,13 +5,10 @@ import '../core/constants.dart';
 
 /// Key coloring for flat reference-style numpad on gradient.
 enum ConverterKeyTone {
-  /// Digits and decimal (light: teal; dark: white).
+  /// Digits, decimal, clear "C", and mode icon (light: teal; dark: white).
   digit,
 
-  /// AC clear (light: coral; dark: white).
-  clear,
-
-  /// Backspace, CRYPTO, etc. (light: teal; dark: white).
+  /// Backspace and legacy auxiliary (light: teal; dark: white).
   auxiliary,
 }
 
@@ -43,17 +40,9 @@ class NumpadButton extends StatelessWidget {
     this.converterTone = ConverterKeyTone.digit,
   }) : assert(label != null || child != null);
 
-  static const String _font = 'Roboto';
-
   Color _flatForeground(bool isDark) {
     if (isDark) return Colors.white;
-    switch (converterTone) {
-      case ConverterKeyTone.clear:
-        return refLightKeypadCoral;
-      case ConverterKeyTone.digit:
-      case ConverterKeyTone.auxiliary:
-        return refLightKeypadTeal;
-    }
+    return refLightKeypadTeal;
   }
 
   @override
@@ -73,7 +62,7 @@ class NumpadButton extends StatelessWidget {
                 label!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: _font,
+                  fontFamily: kLarazFontFamily,
                   fontSize: effectiveFontSize,
                   fontWeight: fontWeight,
                   color: _flatForeground(isDark),
@@ -104,7 +93,7 @@ class NumpadButton extends StatelessWidget {
                 label!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: 'Merriweather',
+                  fontFamily: kLarazFontFamily,
                   fontSize: effectiveFontSize,
                   fontWeight: fontWeight,
                   color: textColor,

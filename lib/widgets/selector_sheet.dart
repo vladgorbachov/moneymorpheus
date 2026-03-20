@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:moneymorpheus/l10n/app_localizations.dart';
+import 'package:fluxly/l10n/app_localizations.dart';
 
 import '../core/constants.dart';
 import '../core/selector_item.dart';
@@ -392,7 +392,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                     child: Text(
                       l10n.done,
                       style: const TextStyle(
-                        fontFamily: 'Cormorant',
+                        fontFamily: kLarazFontFamily,
                         fontSize: 25,
                         fontWeight: FontWeight.w700,
                       ),
@@ -576,7 +576,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                           child: Text(
                             l10n.done,
                             style: TextStyle(
-                              fontFamily: 'Cormorant',
+                              fontFamily: kLarazFontFamily,
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
                               color: doneTextColor,

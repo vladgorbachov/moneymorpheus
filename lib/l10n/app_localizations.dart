@@ -115,7 +115,7 @@ abstract class AppLocalizations {
   /// No description provided for @ac.
   ///
   /// In en, this message translates to:
-  /// **'AC'**
+  /// **'C'**
   String get ac;
 
   /// No description provided for @backspace.
@@ -249,42 +249,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Symbol Z–A'**
   String get cryptoSortSymbolDesc;
-
-  /// No description provided for @speakConversionResult.
-  ///
-  /// In en, this message translates to:
-  /// **'Speak conversion result'**
-  String get speakConversionResult;
-
-  /// No description provided for @voiceUnderstanding.
-  ///
-  /// In en, this message translates to:
-  /// **'Voice conversion'**
-  String get voiceUnderstanding;
-
-  /// No description provided for @voiceOpenAiLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'OpenAI (any language)'**
-  String get voiceOpenAiLabel;
-
-  /// No description provided for @voiceDeviceLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Device: number only'**
-  String get voiceDeviceLabel;
-
-  /// No description provided for @voiceCouldNotParse.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not parse phrase; entered number only'**
-  String get voiceCouldNotParse;
-
-  /// No description provided for @voiceAddOpenAiKeyHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Add OPENAI_API_KEY to .env for full voice conversion'**
-  String get voiceAddOpenAiKeyHint;
 }
 
 class _AppLocalizationsDelegate

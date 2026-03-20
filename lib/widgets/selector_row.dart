@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/constants.dart';
+
 class SelectorRow extends StatelessWidget {
   final String label;
   final String value;
@@ -40,29 +42,38 @@ class SelectorRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: Text(
-                label,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontFamily: 'Cormorant',
-                  fontSize: labelSize,
-                  fontWeight: FontWeight.w700,
-                  color: hintColor,
-                  height: compactVertical ? 1.05 : null,
+              flex: 5,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  label,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontFamily: kLarazFontFamily,
+                    fontSize: labelSize,
+                    fontWeight: FontWeight.w700,
+                    color: hintColor,
+                    height: compactVertical ? 1.05 : null,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                value,
-                textAlign: TextAlign.right,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: 'Cormorant',
-                  fontSize: valueSize,
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 4,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  value,
+                  textAlign: TextAlign.right,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: kLarazFontFamily,
+                    fontSize: valueSize,
+                    fontWeight: FontWeight.w700,
+                    color: textColor,
+                  ),
                 ),
               ),
             ),

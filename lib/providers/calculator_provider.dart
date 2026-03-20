@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/constants.dart';
 import '../data/models/exchange_response.dart';
 import 'converter_mode_provider.dart';
 import 'crypto_provider.dart';
@@ -10,7 +11,7 @@ class CalculatorState {
   final String inputString;
   final double amount;
 
-  const CalculatorState({this.inputString = '0', this.amount = 0});
+  const CalculatorState({this.inputString = '0.0', this.amount = 0});
 
   CalculatorState copyWith({String? inputString, double? amount}) {
     return CalculatorState(
@@ -31,18 +32,31 @@ class CalculatorNotifier extends Notifier<CalculatorState> {
 
   void appendDigit(String digit) {
     if (digit == '.' && state.inputString.contains('.')) return;
-    if (state.inputString == '0' && digit != '.') {
-      state = state.copyWith(inputString: digit, amount: _parseAmount(digit));
+    if (state.inputString == '0' && digit == '.') {
+      state = state.copyWith(inputString: '0.', amount: 0);
+      return;
+    }
+    if (digit != '.' &&
+        (state.inputString == '0' || state.inputString == '0.0')) {
+      final next = _parseAmount(digit);
+      if (next > kMaxConverterAmount) return;
+      state = state.copyWith(inputString: digit, amount: next);
       return;
     }
     final newInput = state.inputString + digit;
+    final nextAmount = _parseAmount(newInput);
+    if (nextAmount > kMaxConverterAmount) return;
     state = state.copyWith(
       inputString: newInput,
-      amount: _parseAmount(newInput),
+      amount: nextAmount,
     );
   }
 
   void backspace() {
+    if (state.inputString == '0' || state.inputString == '0.0') {
+      state = const CalculatorState();
+      return;
+    }
     if (state.inputString.length <= 1) {
       state = const CalculatorState();
       return;
@@ -59,13 +73,6 @@ class CalculatorNotifier extends Notifier<CalculatorState> {
 
   void clear() {
     state = const CalculatorState();
-  }
-
-  void setFromVoice(double value) {
-    final inputString = value == value.truncateToDouble()
-        ? value.toInt().toString()
-        : value.toString();
-    state = state.copyWith(inputString: inputString, amount: value);
   }
 
   double _parseAmount(String input) {
@@ -86,6 +93,8 @@ double? convertAmount(
   return amount * (toRate / fromRate);
 }
 
+/// Converts [amount] of [fromSymbol] into units of [toSymbol] using Binance USDT prices.
+/// Value in USDT is preserved: amount * fromPrice / toPrice.
 double? convertCryptoAmount(
   double amount,
   String fromSymbol,
@@ -95,8 +104,8 @@ double? convertCryptoAmount(
   if (fromSymbol == toSymbol) return amount;
   final fromPrice = pricesUsdt[fromSymbol];
   final toPrice = pricesUsdt[toSymbol];
-  if (fromPrice == null || toPrice == null || fromPrice == 0) return null;
-  return amount * (toPrice / fromPrice);
+  if (fromPrice == null || toPrice == null || toPrice == 0) return null;
+  return amount * (fromPrice / toPrice);
 }
 
 final convertedAmountsProvider = Provider<Map<String, double>>((ref) {
@@ -121,26 +130,30 @@ final convertedAmountsProvider = Provider<Map<String, double>>((ref) {
     final baseCrypto = settings.baseCrypto;
     result[baseCrypto] = amount;
     final pricesAsync = ref.watch(cryptoPricesUsdtProvider);
+    final ratesAsync = ref.watch(exchangeRatesProvider);
     final prices = switch (pricesAsync) {
       AsyncData(:final value) => value,
       _ => null,
     };
-    if (prices != null) {
-      final rows = <String>[
-        if (settings.isRow2Visible) settings.row2Crypto,
-        if (settings.isRow3Visible) settings.row3Crypto,
-      ];
-      for (final symbol in rows) {
-        if (symbol != baseCrypto) {
-          final converted = convertCryptoAmount(
-            amount,
-            baseCrypto,
-            symbol,
-            prices,
-          );
-          if (converted != null) result[symbol] = converted;
-        }
-      }
+    final rates = switch (ratesAsync) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
+    if (prices == null || rates == null) return result;
+
+    // Binance: base asset price in USDT (~USD). Fiat rows: bridge via USD then exchangerate API.
+    final baseUsdPerUnit = prices[baseCrypto];
+    if (baseUsdPerUnit == null) return result;
+    final valueUsd = amount * baseUsdPerUnit;
+
+    final fiatRows = <String>[
+      if (settings.isRow2Visible) settings.row2Currency,
+      if (settings.isRow3Visible) settings.row3Currency,
+    ];
+    for (final fiat in fiatRows) {
+      if (fiat == baseCrypto) continue;
+      final converted = convertAmount(valueUsd, 'USD', fiat, rates);
+      if (converted != null) result[fiat] = converted;
     }
     return result;
   }

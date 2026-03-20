@@ -15,8 +15,6 @@ class SettingsState {
   final bool isRow3Visible;
   final bool isDarkMode;
   final String locale;
-  final bool speechOutputEnabled;
-  final VoiceInterpretationMode voiceInterpretation;
 
   const SettingsState({
     this.baseCurrency = 'EUR',
@@ -29,8 +27,6 @@ class SettingsState {
     this.isRow3Visible = false,
     this.isDarkMode = true,
     this.locale = 'en',
-    this.speechOutputEnabled = true,
-    this.voiceInterpretation = VoiceInterpretationMode.openAi,
   });
 
   SettingsState copyWith({
@@ -44,8 +40,6 @@ class SettingsState {
     bool? isRow3Visible,
     bool? isDarkMode,
     String? locale,
-    bool? speechOutputEnabled,
-    VoiceInterpretationMode? voiceInterpretation,
   }) {
     return SettingsState(
       baseCurrency: baseCurrency ?? this.baseCurrency,
@@ -58,8 +52,6 @@ class SettingsState {
       isRow3Visible: isRow3Visible ?? this.isRow3Visible,
       isDarkMode: isDarkMode ?? this.isDarkMode,
       locale: locale ?? this.locale,
-      speechOutputEnabled: speechOutputEnabled ?? this.speechOutputEnabled,
-      voiceInterpretation: voiceInterpretation ?? this.voiceInterpretation,
     );
   }
 
@@ -99,8 +91,6 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     final isRow3Visible = await _repository.getIsRow3Visible();
     final isDarkMode = await _repository.getIsDarkMode();
     final locale = await _repository.getLocale();
-    final speechOutputEnabled = await _repository.getSpeechOutputEnabled();
-    final voiceRaw = await _repository.getVoiceInterpretation();
     return SettingsState(
       baseCurrency: baseCurrency,
       row2Currency: row2Currency,
@@ -112,8 +102,6 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
       isRow3Visible: isRow3Visible,
       isDarkMode: isDarkMode,
       locale: locale,
-      speechOutputEnabled: speechOutputEnabled,
-      voiceInterpretation: VoiceInterpretationModeStorage.parse(voiceRaw),
     );
   }
 
@@ -197,20 +185,6 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     await _update(
       () => _repository.setLocale(value),
       (s) => s.copyWith(locale: value),
-    );
-  }
-
-  Future<void> setSpeechOutputEnabled(bool value) async {
-    await _update(
-      () => _repository.setSpeechOutputEnabled(value),
-      (s) => s.copyWith(speechOutputEnabled: value),
-    );
-  }
-
-  Future<void> setVoiceInterpretation(VoiceInterpretationMode value) async {
-    await _update(
-      () => _repository.setVoiceInterpretation(value.storageValue),
-      (s) => s.copyWith(voiceInterpretation: value),
     );
   }
 

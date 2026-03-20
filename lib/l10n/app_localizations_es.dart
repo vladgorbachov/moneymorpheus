@@ -9,7 +9,7 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get ac => 'AC';
+  String get ac => 'C';
 
   @override
   String get backspace => '⌫';
@@ -76,24 +76,4 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cryptoSortSymbolDesc => 'Symbol Z–A';
-
-  @override
-  String get speakConversionResult => 'Speak conversion result';
-
-  @override
-  String get voiceUnderstanding => 'Voice conversion';
-
-  @override
-  String get voiceOpenAiLabel => 'OpenAI (any language)';
-
-  @override
-  String get voiceDeviceLabel => 'Device: number only';
-
-  @override
-  String get voiceCouldNotParse =>
-      'Could not parse phrase; entered number only';
-
-  @override
-  String get voiceAddOpenAiKeyHint =>
-      'Add OPENAI_API_KEY to .env for full voice conversion';
 }

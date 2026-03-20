@@ -1,41 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-/// Typography for reference-style converter rows (Roboto / system sans).
-const String _kConverterSans = 'Roboto';
+import '../core/constants.dart';
 
-/// Teal / white on gradient per reference mockups.
+/// Teal / white on gradient; amounts use LARAZ and scale down when long.
 class CurrencyRow extends StatelessWidget {
   final String currencyCode;
   final double amount;
+
+  /// When set (base row), shows raw keypad input; [amount] still drives conversion.
+  final String? inputOverride;
   final VoidCallback? onTap;
 
   const CurrencyRow({
     super.key,
     required this.currencyCode,
     required this.amount,
+    this.inputOverride,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final formatted = _formatAmount(amount);
-    const lineColor = Colors.white;
-    const primaryText = Colors.white;
+    final formatted = inputOverride != null
+        ? _formatInputDisplay(inputOverride!)
+        : _formatAmount(context, amount);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? Colors.white : refLightKeypadTeal;
+    final lineColor = primaryText;
+    final scale = _scaleForDisplayLength(formatted.length);
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final h = constraints.maxHeight.isFinite ? constraints.maxHeight : 120.0;
-        // Code: +50% vs base; amount: same base scale then −30% (user-tuned readability).
         final codeSize = ((h * 0.16).clamp(15.0, 20.0) + 1) * 1.5;
-        final amountSize =
+        final baseAmountSize =
             (((h * 0.36).clamp(26.0, 48.0) + 3) * 1.5) * 0.7;
+        final amountSize = baseAmountSize * scale;
         final iconSize = codeSize * 1.15;
 
         return GestureDetector(
           onTap: onTap,
           behavior: HitTestBehavior.opaque,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            padding: const EdgeInsets.fromLTRB(6, 4, 2, 4),
             child: Center(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -48,7 +56,7 @@ class CurrencyRow extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontFamily: _kConverterSans,
+                          fontFamily: kLarazFontFamily,
                           fontSize: codeSize,
                           fontWeight: FontWeight.w500,
                           color: primaryText,
@@ -65,26 +73,29 @@ class CurrencyRow extends StatelessWidget {
                       ],
                     ],
                   ),
-                  const Spacer(),
-                  IntrinsicWidth(
+                  const SizedBox(width: 8),
+                  Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
+                        Align(
                           alignment: Alignment.centerRight,
-                          child: Text(
-                            formatted,
-                            textAlign: TextAlign.right,
-                            maxLines: 1,
-                            style: TextStyle(
-                              fontFamily: _kConverterSans,
-                              fontSize: amountSize,
-                              fontWeight: FontWeight.w700,
-                              color: primaryText,
-                              height: 1.05,
-                              letterSpacing: -0.5,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              formatted,
+                              textAlign: TextAlign.right,
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontFamily: kLarazFontFamily,
+                                fontSize: amountSize,
+                                fontWeight: FontWeight.w700,
+                                color: primaryText,
+                                height: 1.05,
+                                letterSpacing: -0.5,
+                              ),
                             ),
                           ),
                         ),
@@ -102,14 +113,38 @@ class CurrencyRow extends StatelessWidget {
     );
   }
 
-  String _formatAmount(double value) {
-    if (value >= 1e9 || (value < 1e-2 && value > 0)) {
-      return value.toStringAsExponential(2);
+  /// Smaller text when digit count grows (default `0.0` uses full [base] scale).
+  static double _scaleForDisplayLength(int len) {
+    if (len <= 4) return 1.0;
+    if (len <= 8) return 0.88;
+    if (len <= 12) return 0.76;
+    if (len <= 16) return 0.64;
+    if (len <= 20) return 0.54;
+    return 0.44;
+  }
+
+  String _formatInputDisplay(String raw) {
+    if (raw == '0') return '0.0';
+    return raw;
+  }
+
+  String _formatAmount(BuildContext context, double value) {
+    if (value.isNaN || value.isInfinite) return '—';
+    if (value == 0) return '0.0';
+    final capped = value.abs() > kMaxConverterAmount
+        ? value.sign * kMaxConverterAmount
+        : value;
+    final localeTag = Localizations.localeOf(context).toLanguageTag();
+    if (capped != 0 && capped.abs() < 1e-8) {
+      return capped.toStringAsExponential(4);
     }
-    if (value == value.truncateToDouble()) {
-      return value.toInt().toString();
+    if (capped.abs() >= 1e9) {
+      return capped.toStringAsExponential(4);
     }
-    final s = value.toStringAsFixed(8);
-    return s.replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
+    final nf = NumberFormat.decimalPatternDigits(
+      locale: localeTag,
+      decimalDigits: 8,
+    );
+    return nf.format(capped);
   }
 }
