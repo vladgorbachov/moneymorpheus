@@ -1,95 +1,103 @@
 import 'package:flutter/material.dart';
 
+/// Typography for reference-style converter rows (Roboto / system sans).
+const String _kConverterSans = 'Roboto';
+
+/// Teal / white on gradient per reference mockups.
 class CurrencyRow extends StatelessWidget {
   final String currencyCode;
   final double amount;
   final VoidCallback? onTap;
-  final bool isDarkMode;
-  final bool showDivider;
 
   const CurrencyRow({
     super.key,
     required this.currencyCode,
     required this.amount,
     this.onTap,
-    this.isDarkMode = true,
-    this.showDivider = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final formatted = _formatAmount(amount);
-    final textColor = isDarkMode
-        ? Colors.white.withValues(alpha: 0.95)
-        : const Color(0xFF1A1A2E);
-    final hintColor = isDarkMode
-        ? Colors.white.withValues(alpha: 0.66)
-        : const Color(0xFF1A1A2E).withValues(alpha: 0.58);
+    const lineColor = Colors.white;
+    const primaryText = Colors.white;
 
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        height: 122,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Flexible(
-                  child: Text(
-                    currencyCode,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                      fontFamily: 'DejaVuSans',
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: hintColor,
-                      letterSpacing: 0.4,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final h = constraints.maxHeight.isFinite ? constraints.maxHeight : 120.0;
+        final codeSize = (h * 0.16).clamp(15.0, 20.0) + 1;
+        // Amount column: +2 vs previous sizing (both themes).
+        final amountSize = (h * 0.36).clamp(26.0, 48.0) + 3;
+        final iconSize = codeSize * 1.15;
+
+        return GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            child: Center(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        currencyCode,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: _kConverterSans,
+                          fontSize: codeSize,
+                          fontWeight: FontWeight.w500,
+                          color: primaryText,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                      if (onTap != null) ...[
+                        SizedBox(width: codeSize * 0.15),
+                        Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: iconSize,
+                          color: primaryText,
+                        ),
+                      ],
+                    ],
+                  ),
+                  const Spacer(),
+                  IntrinsicWidth(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            formatted,
+                            textAlign: TextAlign.right,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontFamily: _kConverterSans,
+                              fontSize: amountSize,
+                              fontWeight: FontWeight.w700,
+                              color: primaryText,
+                              height: 1.05,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: (h * 0.06).clamp(4.0, 10.0)),
+                        Container(height: 1, color: lineColor),
+                      ],
                     ),
                   ),
-                ),
-                if (onTap != null) ...[
-                  const SizedBox(width: 6),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: 26,
-                    color: hintColor,
-                  ),
                 ],
-              ],
-            ),
-            const SizedBox(height: 6),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerRight,
-              child: Text(
-                formatted,
-                textAlign: TextAlign.end,
-                style: TextStyle(
-                  fontFamily: 'Metropolis',
-                  fontSize: 44,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
-                  letterSpacing: -0.9,
-                ),
               ),
             ),
-            const SizedBox(height: 10),
-            if (showDivider)
-              Divider(
-                height: 1,
-                color: isDarkMode
-                    ? Colors.white.withValues(alpha: 0.12)
-                    : const Color(0xFF1A1A2E).withValues(alpha: 0.08),
-              ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

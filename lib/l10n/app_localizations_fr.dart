@@ -39,19 +39,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings => 'Paramètres';
 
   @override
-  String get baseCurrency => 'Première devise préférée';
+  String get baseCurrency => 'Première devise\npréférée';
 
   @override
-  String get row2Currency => 'Deuxième devise préférée';
+  String get row2Currency => 'Deuxième devise\npréférée';
 
   @override
-  String get row3Currency => 'Troisième devise préférée';
-
-  @override
-  String get showRow2 => 'Afficher/Masquer';
-
-  @override
-  String get showRow3 => 'Afficher/Masquer';
+  String get row3Currency => 'Troisième devise\npréférée';
 
   @override
   String get done => 'Terminé';
@@ -64,4 +58,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get language => 'Langue';
+
+  @override
+  String get thirdCurrencyRow => 'Troisième ligne de devises';
 }

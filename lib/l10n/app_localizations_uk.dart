@@ -39,19 +39,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get settings => 'Налаштування';
 
   @override
-  String get baseCurrency => 'Перша бажана валюта';
+  String get baseCurrency => 'Перша бажана\nвалюта';
 
   @override
-  String get row2Currency => 'Друга бажана валюта';
+  String get row2Currency => 'Друга бажана\nвалюта';
 
   @override
-  String get row3Currency => 'Третя бажана валюта';
-
-  @override
-  String get showRow2 => 'Показати/Сховати';
-
-  @override
-  String get showRow3 => 'Показати/Сховати';
+  String get row3Currency => 'Третя бажана\nвалюта';
 
   @override
   String get done => 'Готово';
@@ -64,4 +58,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get language => 'Мова';
+
+  @override
+  String get thirdCurrencyRow => 'Третій ряд валют';
 }

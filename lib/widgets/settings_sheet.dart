@@ -11,14 +11,49 @@ import 'asset_picker.dart';
 import 'selector_row.dart';
 
 class SettingsSheet extends ConsumerWidget {
-  const SettingsSheet({super.key});
+  const SettingsSheet({super.key, this.anchoredFromTop = false});
 
-  static Future<void> show(BuildContext context) {
+  /// When true, sheet fills [SizedBox] height from [SettingsSheet.show] anchor dialog.
+  final bool anchoredFromTop;
+
+  /// Opens settings aligned under the main currency card: top edge [currencyPanelTop] − 2 px.
+  /// Falls back to bottom sheet when [currencyPanelTop] is null.
+  static Future<void> show(
+    BuildContext context, {
+    double? currencyPanelTop,
+  }) {
+    if (currencyPanelTop != null) {
+      final panelY = currencyPanelTop;
+      return showGeneralDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierColor: Colors.black.withValues(alpha: 0.32),
+        transitionDuration: const Duration(milliseconds: 260),
+        pageBuilder: (dialogContext, animation, secondaryAnimation) {
+          final h = MediaQuery.sizeOf(dialogContext).height;
+          final top = (panelY - 2).clamp(0.0, h - 120);
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned(
+                top: top,
+                left: 20,
+                right: 20,
+                bottom: 0,
+                child: const SettingsSheet(anchoredFromTop: true),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const SettingsSheet(),
+      builder: (context) => const SettingsSheet(anchoredFromTop: false),
     );
   }
 
@@ -50,10 +85,13 @@ class SettingsSheet extends ConsumerWidget {
         ? Colors.white.withValues(alpha: 0.12)
         : const Color(0xFF0D0D0D).withValues(alpha: 0.08);
 
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.8,
-      ),
+    final maxH = anchoredFromTop
+        ? double.infinity
+        : MediaQuery.sizeOf(context).height * 0.8;
+
+    final shell = Container(
+      width: double.infinity,
+      constraints: BoxConstraints(maxHeight: maxH),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: isDark ? 0.08 : 0.20),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
@@ -63,7 +101,8 @@ class SettingsSheet extends ConsumerWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? accentColor : lightAccentColor).withValues(alpha: isDark ? 0.16 : 0.08),
+            color: (isDark ? accentColor : lightAccentColor)
+                .withValues(alpha: isDark ? 0.16 : 0.08),
             blurRadius: 28,
           ),
         ],
@@ -98,7 +137,7 @@ class SettingsSheet extends ConsumerWidget {
                         l10n.settings,
                         style: TextStyle(
                           fontFamily: 'Cormorant',
-                          fontSize: 34,
+                          fontSize: 35,
                           fontWeight: FontWeight.w700,
                           color: textColor,
                         ),
@@ -124,7 +163,8 @@ class SettingsSheet extends ConsumerWidget {
                         currentId: settings.locale.length >= 2
                             ? settings.locale.substring(0, 2)
                             : settings.locale,
-                        onSelected: (v) => ref.read(settingsProvider.notifier).setLocale(v),
+                        onSelected: (v) =>
+                            ref.read(settingsProvider.notifier).setLocale(v),
                         isDarkMode: isDark,
                         searchHint: l10n.searchLanguage,
                       ),
@@ -139,7 +179,8 @@ class SettingsSheet extends ConsumerWidget {
                       onTap: () => AssetPicker.showFiat(
                         context,
                         currentId: settings.baseCurrency,
-                        onSelected: (v) => ref.read(settingsProvider.notifier).setBaseCurrency(v),
+                        onSelected: (v) =>
+                            ref.read(settingsProvider.notifier).setBaseCurrency(v),
                         isDarkMode: isDark,
                         searchHint: l10n.searchCurrency,
                       ),
@@ -151,43 +192,44 @@ class SettingsSheet extends ConsumerWidget {
                       l10n.row2Currency,
                       settings.row2Currency,
                       isDark,
+                      compactVertical: true,
                       onTap: () => AssetPicker.showFiat(
                         context,
                         currentId: settings.row2Currency,
-                        onSelected: (v) => ref.read(settingsProvider.notifier).setRow2Currency(v),
+                        onSelected: (v) =>
+                            ref.read(settingsProvider.notifier).setRow2Currency(v),
                         isDarkMode: isDark,
                         searchHint: l10n.searchCurrency,
                       ),
-                    ),
-                    _buildSwitch(
-                      l10n.showRow2,
-                      settings.isRow2Visible,
-                      (v) => ref.read(settingsProvider.notifier).setIsRow2Visible(v),
-                      hintColor,
-                      isDark,
                     ),
                     Divider(height: 1, color: dividerColor),
-                    _buildSelectorRow(
-                      context,
-                      ref,
-                      l10n.row3Currency,
-                      settings.row3Currency,
-                      isDark,
-                      onTap: () => AssetPicker.showFiat(
-                        context,
-                        currentId: settings.row3Currency,
-                        onSelected: (v) => ref.read(settingsProvider.notifier).setRow3Currency(v),
-                        isDarkMode: isDark,
-                        searchHint: l10n.searchCurrency,
-                      ),
-                    ),
                     _buildSwitch(
-                      l10n.showRow3,
+                      l10n.thirdCurrencyRow,
                       settings.isRow3Visible,
-                      (v) => ref.read(settingsProvider.notifier).setIsRow3Visible(v),
+                      (v) =>
+                          ref.read(settingsProvider.notifier).setIsRow3Visible(v),
                       hintColor,
                       isDark,
                     ),
+                    if (settings.isRow3Visible) ...[
+                      Divider(height: 1, color: dividerColor),
+                      _buildSelectorRow(
+                        context,
+                        ref,
+                        l10n.row3Currency,
+                        settings.row3Currency,
+                        isDark,
+                        compactVertical: true,
+                        onTap: () => AssetPicker.showFiat(
+                          context,
+                          currentId: settings.row3Currency,
+                          onSelected: (v) =>
+                              ref.read(settingsProvider.notifier).setRow3Currency(v),
+                          isDarkMode: isDark,
+                          searchHint: l10n.searchCurrency,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 26),
                     SizedBox(
                       height: 62,
@@ -225,6 +267,14 @@ class SettingsSheet extends ConsumerWidget {
         ),
       ),
     );
+
+    if (anchoredFromTop) {
+      return Material(
+        color: Colors.transparent,
+        child: SizedBox.expand(child: shell),
+      );
+    }
+    return shell;
   }
 
   Widget _buildSelectorRow(
@@ -234,12 +284,14 @@ class SettingsSheet extends ConsumerWidget {
     String value,
     bool isDark, {
     required VoidCallback onTap,
+    bool compactVertical = false,
   }) {
     return SelectorRow(
       label: label,
       value: value,
       onTap: onTap,
       isDarkMode: isDark,
+      compactVertical: compactVertical,
     );
   }
 
@@ -262,7 +314,7 @@ class SettingsSheet extends ConsumerWidget {
               label,
               style: TextStyle(
                 fontFamily: 'Cormorant',
-                fontSize: 24,
+                fontSize: 25,
                 fontWeight: FontWeight.w700,
                 color: hintColor,
               ),

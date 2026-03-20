@@ -8,12 +8,16 @@ import '../data/models/crypto_ticker.dart';
 import '../providers/crypto_provider.dart';
 import '../providers/favourites_provider.dart';
 
+/// Light theme: replaces white body text on crypto detail.
+const _lightCryptoPrimary = Color(0xFF00E6BF);
+
+/// Light theme: replaces gray / muted labels.
+const _lightCryptoSecondary = Color(0xFF005B63);
+
 const _positiveColor = Color(0xFF2EB872);
 const _negativeColor = Color(0xFFFF5A5A);
 const _favouriteColor = Color(0xFFFFD700);
 const _secondaryColor = Color(0xFFB9BDD2);
-const _tabActiveColor = Color(0xFFFFD700);
-
 const _intervals = ['15m', '1h', '4h', '1d', '1w'];
 const _binanceIntervals = ['15m', '1h', '4h', '1d', '1w'];
 
@@ -50,7 +54,7 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration: buildThemedWallpaper(widget.isDarkMode),
+        decoration: converterScreenDecoration(widget.isDarkMode),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 22),
@@ -68,10 +72,10 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
                       child: Text(
                         '${widget.symbol}/USDT',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: widget.isDarkMode ? Colors.white : _lightCryptoPrimary,
                           fontWeight: FontWeight.w700,
-                          fontSize: 24,
+                          fontSize: 25,
                           fontFamily: 'DejaVuSans',
                         ),
                       ),
@@ -79,21 +83,25 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
                     _GlassIconButton(
                       isDarkMode: widget.isDarkMode,
                       icon: isFavourite ? Icons.star_rounded : Icons.star_border_rounded,
-                      iconColor: isFavourite ? _favouriteColor : _secondaryColor,
+                      iconColor: isFavourite
+                          ? _favouriteColor
+                          : (widget.isDarkMode ? _secondaryColor : _lightCryptoSecondary),
                       onTap: () => ref.read(favouritesProvider.notifier).toggle(widget.symbol),
                     ),
                   ],
                 ),
                 const SizedBox(height: 18),
                 tickerAsync.when(
-                  data: (ticker) => ticker != null ? _PriceSection(ticker: ticker) : const SizedBox.shrink(),
+                  data: (ticker) => ticker != null
+                      ? _PriceSection(ticker: ticker, isDarkMode: widget.isDarkMode)
+                      : const SizedBox.shrink(),
                   loading: () => const Padding(
                     padding: EdgeInsets.all(24),
                     child: Center(child: CircularProgressIndicator(color: _favouriteColor)),
                   ),
                   error: (e, _) => Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text(e.toString(), style: const TextStyle(color: _negativeColor, fontSize: 12)),
+                    child: Text(e.toString(), style: const TextStyle(color: _negativeColor, fontSize: 13)),
                   ),
                 ),
                 const SizedBox(height: 18),
@@ -116,7 +124,11 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
                           ? Center(
                               child: Text(
                                 'No chart data',
-                                style: TextStyle(color: _secondaryColor.withValues(alpha: 0.9)),
+                                style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? _secondaryColor.withValues(alpha: 0.9)
+                                      : _lightCryptoSecondary,
+                                ),
                               ),
                             )
                           : _CandlestickChart(
@@ -127,7 +139,7 @@ class _CryptoDetailScreenState extends ConsumerState<CryptoDetailScreen> {
                       error: (e, _) => Center(
                         child: Text(
                           e.toString(),
-                          style: const TextStyle(color: _negativeColor, fontSize: 12),
+                          style: const TextStyle(color: _negativeColor, fontSize: 13),
                         ),
                       ),
                     ),
@@ -171,7 +183,12 @@ class _GlassIconButton extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
             onTap: onTap,
-            child: Icon(icon, color: iconColor ?? Colors.white, size: 26),
+            child: Icon(
+              icon,
+              color: iconColor ??
+                  (isDarkMode ? Colors.white : _lightCryptoPrimary),
+              size: 27,
+            ),
           ),
         ),
       ),
@@ -181,14 +198,18 @@ class _GlassIconButton extends StatelessWidget {
 
 class _PriceSection extends StatelessWidget {
   final CryptoTicker ticker;
+  final bool isDarkMode;
 
-  const _PriceSection({required this.ticker});
+  const _PriceSection({required this.ticker, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
     final isPositive = ticker.change24h >= 0;
     final isStable = ticker.baseSymbol == 'USDT' || ticker.change24h == 0;
-    final changeColor = isStable ? _secondaryColor : (isPositive ? _positiveColor : _negativeColor);
+    final changeColor = isStable
+        ? (isDarkMode ? _secondaryColor : _lightCryptoSecondary)
+        : (isPositive ? _positiveColor : _negativeColor);
+    final priceColor = isDarkMode ? Colors.white : _lightCryptoPrimary;
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -202,10 +223,10 @@ class _PriceSection extends StatelessWidget {
         children: [
           Text(
             '\$${_formatPrice(ticker.price)}',
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: priceColor,
               fontWeight: FontWeight.bold,
-              fontSize: 40,
+              fontSize: 41,
               fontFamily: 'Metropolis',
             ),
           ),
@@ -214,7 +235,7 @@ class _PriceSection extends StatelessWidget {
             '${ticker.change24h >= 0 ? '+' : ''}${ticker.change24h.toStringAsFixed(2)}%',
             style: TextStyle(
               color: changeColor,
-              fontSize: 18,
+              fontSize: 19,
               fontWeight: FontWeight.w600,
               fontFamily: 'Metropolis',
             ),
@@ -222,15 +243,39 @@ class _PriceSection extends StatelessWidget {
           const SizedBox(height: 18),
           Row(
             children: [
-              Expanded(child: _StatItem(label: '24h High', value: _formatPrice(ticker.high24h))),
-              Expanded(child: _StatItem(label: '24h Low', value: _formatPrice(ticker.low24h))),
+              Expanded(
+                child: _StatItem(
+                  label: '24h High',
+                  value: _formatPrice(ticker.high24h),
+                  isDarkMode: isDarkMode,
+                ),
+              ),
+              Expanded(
+                child: _StatItem(
+                  label: '24h Low',
+                  value: _formatPrice(ticker.low24h),
+                  isDarkMode: isDarkMode,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _StatItem(label: '24h Vol (${ticker.baseSymbol})', value: _formatVolume(ticker.volume))),
-              Expanded(child: _StatItem(label: '24h Vol (USDT)', value: _formatVolume(ticker.quoteVolume24h))),
+              Expanded(
+                child: _StatItem(
+                  label: '24h Vol (${ticker.baseSymbol})',
+                  value: _formatVolume(ticker.volume),
+                  isDarkMode: isDarkMode,
+                ),
+              ),
+              Expanded(
+                child: _StatItem(
+                  label: '24h Vol (USDT)',
+                  value: _formatVolume(ticker.quoteVolume24h),
+                  isDarkMode: isDarkMode,
+                ),
+              ),
             ],
           ),
         ],
@@ -257,24 +302,31 @@ class _PriceSection extends StatelessWidget {
 class _StatItem extends StatelessWidget {
   final String label;
   final String value;
+  final bool isDarkMode;
 
-  const _StatItem({required this.label, required this.value});
+  const _StatItem({
+    required this.label,
+    required this.value,
+    required this.isDarkMode,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final labelColor = isDarkMode ? _secondaryColor : _lightCryptoSecondary;
+    final valueColor = isDarkMode ? Colors.white : _lightCryptoPrimary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(color: _secondaryColor, fontSize: 13, fontFamily: 'DejaVuSans'),
+          style: TextStyle(color: labelColor, fontSize: 14, fontFamily: 'DejaVuSans'),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
+          style: TextStyle(
+            color: valueColor,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
             fontFamily: 'Metropolis',
           ),
@@ -317,8 +369,12 @@ class _TimeframeBar extends StatelessWidget {
                     child: Text(
                       _intervals[i],
                       style: TextStyle(
-                        color: selectedIndex == i ? Colors.white : _secondaryColor,
-                        fontSize: 14,
+                        color: !isDarkMode
+                            ? (selectedIndex == i
+                                ? _lightCryptoPrimary
+                                : _lightCryptoSecondary)
+                            : (selectedIndex == i ? Colors.white : _secondaryColor),
+                        fontSize: 15,
                         fontWeight: selectedIndex == i ? FontWeight.w700 : FontWeight.w500,
                         fontFamily: 'Merriweather',
                       ),
@@ -343,7 +399,8 @@ class _CandlestickChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gridColor = isDarkMode ? Colors.white.withValues(alpha: 0.10) : Colors.black.withValues(alpha: 0.08);
-    final axisColor = isDarkMode ? _secondaryColor : Colors.black54;
+    final axisColor =
+        isDarkMode ? _secondaryColor : _lightCryptoSecondary;
 
     return SfCartesianChart(
       margin: const EdgeInsets.all(12),
@@ -352,12 +409,12 @@ class _CandlestickChart extends StatelessWidget {
       primaryXAxis: DateTimeAxis(
         majorGridLines: MajorGridLines(color: gridColor),
         axisLine: AxisLine(color: gridColor),
-        labelStyle: TextStyle(color: axisColor, fontSize: 10, fontFamily: 'DejaVuSans'),
+        labelStyle: TextStyle(color: axisColor, fontSize: 11, fontFamily: 'DejaVuSans'),
       ),
       primaryYAxis: NumericAxis(
         majorGridLines: MajorGridLines(color: gridColor),
         axisLine: AxisLine(color: gridColor),
-        labelStyle: TextStyle(color: axisColor, fontSize: 10, fontFamily: 'DejaVuSans'),
+        labelStyle: TextStyle(color: axisColor, fontSize: 11, fontFamily: 'DejaVuSans'),
       ),
       tooltipBehavior: TooltipBehavior(enable: true),
       zoomPanBehavior: ZoomPanBehavior(

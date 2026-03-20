@@ -10,13 +10,12 @@
   "searchCrypto": "البحث عن العملة المشفرة",
   "searchLanguage": "البحث عن اللغة",
   "settings": "الإعدادات",
-  "baseCurrency": "العملة المفضلة الأولى",
-  "row2Currency": "العملة المفضلة الثانية",
-  "row3Currency": "العملة المفضلة الثالثة",
-  "showRow2": "إظهار/إخفاء",
-  "showRow3": "إظهار/إخفاء",
+  "baseCurrency": "العملة المفضلة\nالأولى",
+  "row2Currency": "العملة المفضلة\nالثانية",
+  "row3Currency": "العملة المفضلة\nالثالثة",
   "done": "تم",
   "darkMode": "الوضع الداكن",
   "lightMode": "الوضع الفاتح",
-  "language": "اللغة"
+  "language": "اللغة",
+  "thirdCurrencyRow": "صف العملة الثالث"
 }

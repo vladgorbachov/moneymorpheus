@@ -10,13 +10,12 @@
   "searchCrypto": "Szukaj krypto",
   "searchLanguage": "Szukaj języka",
   "settings": "Ustawienia",
-  "baseCurrency": "Pierwsza preferowana waluta",
-  "row2Currency": "Druga preferowana waluta",
-  "row3Currency": "Trzecia preferowana waluta",
-  "showRow2": "Pokaż/Ukryj",
-  "showRow3": "Pokaż/Ukryj",
+  "baseCurrency": "Pierwsza preferowana\nwaluta",
+  "row2Currency": "Druga preferowana\nwaluta",
+  "row3Currency": "Trzecia preferowana\nwaluta",
   "done": "Gotowe",
   "darkMode": "Tryb ciemny",
   "lightMode": "Tryb jasny",
-  "language": "Język"
+  "language": "Język",
+  "thirdCurrencyRow": "Trzeci rząd walut"
 }

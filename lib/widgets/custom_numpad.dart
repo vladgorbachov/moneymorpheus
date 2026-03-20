@@ -32,16 +32,16 @@ class CustomNumpad extends ConsumerWidget {
     SettingsState settings,
     AppLocalizations l10n,
   ) {
-    final isDark = settings.isDarkMode;
-
     return LayoutBuilder(
       builder: (context, constraints) {
         const spacing = 12.0;
-        final buttonWidth = (constraints.maxWidth - spacing * 2) / 3;
-        final topHeight = ((constraints.maxHeight - spacing * 4) * 0.14)
-            .clamp(58.0, 82.0);
-        final standardHeight = ((constraints.maxHeight - spacing * 4 - topHeight) / 4)
-            .clamp(74.0, 118.0);
+        const padT = 10.0;
+        const padB = 8.0;
+        final innerH =
+            (constraints.maxHeight - padT - padB).clamp(0.0, double.infinity);
+        final topHeight = ((innerH - spacing * 4) * 0.14).clamp(48.0, 76.0);
+        final standardHeight =
+            ((innerH - spacing * 4 - topHeight) / 4).clamp(44.0, 110.0);
 
         Widget row(List<Widget> children, double height) {
           return SizedBox(
@@ -49,7 +49,7 @@ class CustomNumpad extends ConsumerWidget {
             child: Row(
               children: [
                 for (var i = 0; i < children.length; i++) ...[
-                  SizedBox(width: buttonWidth, child: children[i]),
+                  Expanded(child: children[i]),
                   if (i != children.length - 1) const SizedBox(width: spacing),
                 ],
               ],
@@ -58,62 +58,96 @@ class CustomNumpad extends ConsumerWidget {
         }
 
         return Container(
-          padding: const EdgeInsets.fromLTRB(14, 18, 14, 16),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: isDark ? 0.07 : 0.18),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: isDark ? 0.22 : 0.38),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: (isDark ? accentColor : lightAccentColor).withValues(alpha: isDark ? 0.18 : 0.10),
-                blurRadius: 26,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
+          padding: const EdgeInsets.fromLTRB(8, padT, 8, padB),
+          color: Colors.transparent,
           child: Column(
             children: [
               row([
                 NumpadButton(
                   label: l10n.ac,
                   compactTopRow: true,
-                  fontSize: 28,
+                  fontSize: 27,
+                  flatConverterStyle: true,
+                  converterTone: ConverterKeyTone.clear,
                   onTap: calculator.clear,
                 ),
                 _CryptoButton(l10n: l10n),
                 NumpadButton(
                   label: l10n.backspace,
                   compactTopRow: true,
-                  fontSize: 22,
+                  fontSize: 23,
+                  flatConverterStyle: true,
+                  converterTone: ConverterKeyTone.auxiliary,
                   onTap: calculator.backspace,
                 ),
               ], topHeight),
               const SizedBox(height: spacing),
               row([
-                NumpadButton(label: '1', onTap: () => calculator.appendDigit('1')),
-                NumpadButton(label: '2', onTap: () => calculator.appendDigit('2')),
-                NumpadButton(label: '3', onTap: () => calculator.appendDigit('3')),
+                NumpadButton(
+                  label: '1',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('1'),
+                ),
+                NumpadButton(
+                  label: '2',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('2'),
+                ),
+                NumpadButton(
+                  label: '3',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('3'),
+                ),
               ], standardHeight),
               const SizedBox(height: spacing),
               row([
-                NumpadButton(label: '4', onTap: () => calculator.appendDigit('4')),
-                NumpadButton(label: '5', onTap: () => calculator.appendDigit('5')),
-                NumpadButton(label: '6', onTap: () => calculator.appendDigit('6')),
+                NumpadButton(
+                  label: '4',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('4'),
+                ),
+                NumpadButton(
+                  label: '5',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('5'),
+                ),
+                NumpadButton(
+                  label: '6',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('6'),
+                ),
               ], standardHeight),
               const SizedBox(height: spacing),
               row([
-                NumpadButton(label: '7', onTap: () => calculator.appendDigit('7')),
-                NumpadButton(label: '8', onTap: () => calculator.appendDigit('8')),
-                NumpadButton(label: '9', onTap: () => calculator.appendDigit('9')),
+                NumpadButton(
+                  label: '7',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('7'),
+                ),
+                NumpadButton(
+                  label: '8',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('8'),
+                ),
+                NumpadButton(
+                  label: '9',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('9'),
+                ),
               ], standardHeight),
               const SizedBox(height: spacing),
               row([
-                _BtcModeButton(),
-                NumpadButton(label: '0', onTap: () => calculator.appendDigit('0')),
-                NumpadButton(label: '.', onTap: () => calculator.appendDigit('.')),
+                const _BtcModeButton(),
+                NumpadButton(
+                  label: '0',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('0'),
+                ),
+                NumpadButton(
+                  label: '.',
+                  flatConverterStyle: true,
+                  onTap: () => calculator.appendDigit('.'),
+                ),
               ], standardHeight),
             ],
           ),
@@ -124,10 +158,13 @@ class CustomNumpad extends ConsumerWidget {
 }
 
 class _BtcModeButton extends ConsumerWidget {
+  const _BtcModeButton();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return NumpadButton(
-      glassHighlight: true,
+      flatConverterStyle: true,
+      converterTone: ConverterKeyTone.digit,
       onTap: () => ref.read(converterModeProvider.notifier).toggle(),
       child: const Center(child: BitcoinBadge(size: 34)),
     );
@@ -144,7 +181,9 @@ class _CryptoButton extends ConsumerWidget {
     return NumpadButton(
       label: 'CRYPTO',
       compactTopRow: true,
-      fontSize: 19.5,
+      fontSize: 18,
+      flatConverterStyle: true,
+      converterTone: ConverterKeyTone.auxiliary,
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute<void>(builder: (_) => const CryptoMarketScreen()),

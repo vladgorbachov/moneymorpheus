@@ -28,7 +28,10 @@ double? _extractNumber(String text) {
 }
 
 class MicrophoneButton extends ConsumerStatefulWidget {
-  const MicrophoneButton({super.key});
+  const MicrophoneButton({super.key, this.foregroundColor});
+
+  /// When set (e.g. white on gradient header), overrides theme-based icon color.
+  final Color? foregroundColor;
 
   @override
   ConsumerState<MicrophoneButton> createState() => _MicrophoneButtonState();
@@ -114,7 +117,8 @@ class _MicrophoneButtonState extends ConsumerState<MicrophoneButton>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final fgColor = isDark ? Colors.white : Colors.black;
+    final fgColor =
+        widget.foregroundColor ?? (isDark ? Colors.white : Colors.black);
 
     return GestureDetector(
       onTap: _toggleListening,
@@ -149,7 +153,7 @@ class _MicrophoneButtonState extends ConsumerState<MicrophoneButton>
               color: _isListening
                   ? Colors.blue.shade200
                   : fgColor.withValues(alpha: 0.8),
-              size: 28,
+              size: 29,
             ),
           );
         },

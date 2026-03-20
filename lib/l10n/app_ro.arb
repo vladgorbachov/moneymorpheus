@@ -10,13 +10,12 @@
   "searchCrypto": "Caută crypto",
   "searchLanguage": "Caută limbă",
   "settings": "Setări",
-  "baseCurrency": "Prima monedă preferată",
-  "row2Currency": "A doua monedă preferată",
-  "row3Currency": "A treia monedă preferată",
-  "showRow2": "Afișare/Ascundere",
-  "showRow3": "Afișare/Ascundere",
+  "baseCurrency": "Prima monedă\npreferată",
+  "row2Currency": "A doua monedă\npreferată",
+  "row3Currency": "A treia monedă\npreferată",
   "done": "Gata",
   "darkMode": "Mod întunecat",
   "lightMode": "Mod deschis",
-  "language": "Limbă"
+  "language": "Limbă",
+  "thirdCurrencyRow": "A treia linie de monede"
 }

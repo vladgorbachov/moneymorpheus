@@ -13,6 +13,12 @@ import '../providers/settings_provider.dart';
 import '../widgets/crypto_logo.dart';
 import 'crypto_detail_screen.dart';
 
+/// Light theme: primary text on crypto screens (replaces white).
+const _lightCryptoPrimary = Color(0xFF00E6BF);
+
+/// Light theme: secondary / muted text (replaces gray).
+const _lightCryptoSecondary = Color(0xFF005B63);
+
 const _positiveColor = Color(0xFF2EB872);
 const _negativeColor = Color(0xFFFF5A5A);
 const _favouriteColor = Color(0xFFFFD700);
@@ -30,13 +36,13 @@ class CryptoMarketScreen extends ConsumerWidget {
       data: (settings) => _CryptoMarketContent(isDarkMode: settings.isDarkMode, l10n: l10n),
       loading: () => Scaffold(
         body: Container(
-          decoration: buildThemedWallpaper(true),
+          decoration: converterScreenDecoration(true),
           child: Center(child: CircularProgressIndicator(color: _favouriteColor)),
         ),
       ),
       error: (e, _) => Scaffold(
         body: Container(
-          decoration: buildThemedWallpaper(true),
+          decoration: converterScreenDecoration(true),
           child: Center(child: Text('Error: $e', style: const TextStyle(color: _negativeColor))),
         ),
       ),
@@ -57,7 +63,7 @@ class _CryptoMarketContent extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration: buildThemedWallpaper(isDarkMode),
+        decoration: converterScreenDecoration(isDarkMode),
         child: SafeArea(
           child: Column(
             children: [
@@ -84,7 +90,7 @@ class _CryptoMarketContent extends ConsumerWidget {
                                 l10n.close,
                                 style: TextStyle(
                                   fontFamily: 'Merriweather',
-                                  fontSize: 21,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white.withValues(alpha: 0.96),
                                 ),
@@ -95,18 +101,6 @@ class _CryptoMarketContent extends ConsumerWidget {
                       ),
                     ),
                     const Spacer(),
-                    Text(
-                      'CRYPTO',
-                      style: TextStyle(
-                        fontFamily: 'Merriweather',
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white.withValues(alpha: 0.96),
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                    const Spacer(),
-                    const SizedBox(width: 120),
                   ],
                 ),
               ),
@@ -121,7 +115,7 @@ class _CryptoMarketContent extends ConsumerWidget {
                       style: const TextStyle(
                         color: Colors.white,
                         fontFamily: 'DejaVuSans',
-                        fontSize: 16,
+                        fontSize: 17,
                       ),
                       decoration: InputDecoration(
                         hintText: l10n.searchCrypto,
@@ -219,7 +213,14 @@ class _TickerRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final isPositive = ticker.change24h >= 0;
     final isStable = ticker.baseSymbol == 'USDT' || ticker.change24h == 0;
-    final priceColor = isStable ? Colors.white : (isPositive ? _positiveColor : _negativeColor);
+    final priceColor = isStable
+        ? (isDarkMode ? Colors.white : _lightCryptoPrimary)
+        : (isPositive ? _positiveColor : _negativeColor);
+    final symbolColor = isDarkMode ? Colors.white : _lightCryptoPrimary;
+    final subtitleColor =
+        isDarkMode ? _secondaryTextColor.withValues(alpha: 0.95) : _lightCryptoSecondary;
+    final volumeColor = isDarkMode ? _secondaryTextColor : _lightCryptoSecondary;
+    final starEmptyColor = isDarkMode ? _secondaryTextColor : _lightCryptoSecondary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
@@ -247,8 +248,8 @@ class _TickerRow extends StatelessWidget {
                       children: [
                         Text(
                           ticker.baseSymbol,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: symbolColor,
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
                             fontFamily: 'DejaVuSans',
@@ -258,7 +259,7 @@ class _TickerRow extends StatelessWidget {
                         Text(
                           cryptoDisplayName(ticker.baseSymbol),
                           style: TextStyle(
-                            color: _secondaryTextColor.withValues(alpha: 0.95),
+                            color: subtitleColor,
                             fontSize: 13,
                             fontFamily: 'DejaVuSans',
                           ),
@@ -277,7 +278,7 @@ class _TickerRow extends StatelessWidget {
                           style: TextStyle(
                             color: priceColor,
                             fontWeight: FontWeight.w700,
-                            fontSize: 18,
+                            fontSize: 19,
                             fontFamily: 'Metropolis',
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -285,9 +286,9 @@ class _TickerRow extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           _formatVolume(ticker.volume),
-                          style: const TextStyle(
-                            color: _secondaryTextColor,
-                            fontSize: 12,
+                          style: TextStyle(
+                            color: volumeColor,
+                            fontSize: 13,
                             fontFamily: 'DejaVuSans',
                           ),
                         ),
@@ -300,8 +301,8 @@ class _TickerRow extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     child: Icon(
                       isFavourite ? Icons.star_rounded : Icons.star_border_rounded,
-                      color: isFavourite ? _favouriteColor : _secondaryTextColor,
-                      size: 28,
+                      color: isFavourite ? _favouriteColor : starEmptyColor,
+                      size: 29,
                     ),
                   ),
                 ],

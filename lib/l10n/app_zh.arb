@@ -10,13 +10,12 @@
   "searchCrypto": "搜索加密货币",
   "searchLanguage": "搜索语言",
   "settings": "设置",
-  "baseCurrency": "首选货币一",
-  "row2Currency": "首选货币二",
-  "row3Currency": "首选货币三",
-  "showRow2": "显示/隐藏",
-  "showRow3": "显示/隐藏",
+  "baseCurrency": "首选货币\n一",
+  "row2Currency": "首选货币\n二",
+  "row3Currency": "首选货币\n三",
   "done": "完成",
   "darkMode": "深色模式",
   "lightMode": "浅色模式",
-  "language": "语言"
+  "language": "语言",
+  "thirdCurrencyRow": "第三货币行"
 }

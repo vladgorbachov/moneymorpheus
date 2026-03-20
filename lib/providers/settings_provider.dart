@@ -24,7 +24,7 @@ class SettingsState {
     this.row2Crypto = 'ETH',
     this.row3Crypto = 'USDT',
     this.isRow2Visible = true,
-    this.isRow3Visible = true,
+    this.isRow3Visible = false,
     this.isDarkMode = true,
     this.locale = 'en',
   });

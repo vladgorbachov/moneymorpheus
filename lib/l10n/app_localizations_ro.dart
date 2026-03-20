@@ -39,19 +39,13 @@ class AppLocalizationsRo extends AppLocalizations {
   String get settings => 'Setări';
 
   @override
-  String get baseCurrency => 'Prima monedă preferată';
+  String get baseCurrency => 'Prima monedă\npreferată';
 
   @override
-  String get row2Currency => 'A doua monedă preferată';
+  String get row2Currency => 'A doua monedă\npreferată';
 
   @override
-  String get row3Currency => 'A treia monedă preferată';
-
-  @override
-  String get showRow2 => 'Afișare/Ascundere';
-
-  @override
-  String get showRow3 => 'Afișare/Ascundere';
+  String get row3Currency => 'A treia monedă\npreferată';
 
   @override
   String get done => 'Gata';
@@ -64,4 +58,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get language => 'Limbă';
+
+  @override
+  String get thirdCurrencyRow => 'A treia linie de monede';
 }

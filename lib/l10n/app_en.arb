@@ -10,13 +10,12 @@
   "searchCrypto": "Search crypto",
   "searchLanguage": "Search language",
   "settings": "Settings",
-  "baseCurrency": "First preferable currency",
-  "row2Currency": "Second preferable currency",
-  "row3Currency": "Third preferable currency",
-  "showRow2": "Show/Hide",
-  "showRow3": "Show/Hide",
+  "baseCurrency": "First preferable\ncurrency",
+  "row2Currency": "Second preferable\ncurrency",
+  "row3Currency": "Third preferable\ncurrency",
   "done": "Done",
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
-  "language": "Language"
+  "language": "Language",
+  "thirdCurrencyRow": "Third currency row"
 }

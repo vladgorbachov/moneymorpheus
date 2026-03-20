@@ -25,7 +25,7 @@ class LanguageMetadata extends AssetMetadata {
 
   @override
   Widget? get leadingWidget => flagEmoji != null
-      ? Text(flagEmoji!, style: const TextStyle(fontSize: 24))
+      ? Text(flagEmoji!, style: const TextStyle(fontSize: 25))
       : null;
 
   static const List<LanguageMetadata> supported = [

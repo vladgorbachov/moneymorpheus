@@ -38,9 +38,9 @@ class MoneymorpheusApp extends ConsumerWidget {
         theme: ThemeData(
           brightness: Brightness.light,
           useMaterial3: true,
-          fontFamily: 'Metropolis',
+          fontFamily: 'Roboto',
           textTheme: ThemeData.light().textTheme.apply(
-            fontFamily: 'Metropolis',
+            fontFamily: 'Roboto',
           ),
           colorScheme: ColorScheme.light(
             surface: lightBackgroundColor,
@@ -50,8 +50,8 @@ class MoneymorpheusApp extends ConsumerWidget {
         darkTheme: ThemeData(
           brightness: Brightness.dark,
           useMaterial3: true,
-          fontFamily: 'Metropolis',
-          textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'Metropolis'),
+          fontFamily: 'Roboto',
+          textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'Roboto'),
           colorScheme: ColorScheme.dark(
             surface: darkBackgroundColor,
             primary: darkAccentColor,

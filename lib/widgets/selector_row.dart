@@ -6,12 +6,16 @@ class SelectorRow extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isDarkMode;
 
+  /// When true, row vertical padding is halved (compact second/third currency rows).
+  final bool compactVertical;
+
   const SelectorRow({
     super.key,
     required this.label,
     required this.value,
     this.onTap,
     this.isDarkMode = true,
+    this.compactVertical = false,
   });
 
   @override
@@ -23,13 +27,17 @@ class SelectorRow extends StatelessWidget {
         ? Colors.white.withValues(alpha: 0.68)
         : const Color(0xFF1A1A2E).withValues(alpha: 0.54);
 
+    final vPad = compactVertical ? 7.0 : 14.0;
+    final labelSize = compactVertical ? 21.0 : 23.0;
+    final valueSize = compactVertical ? 25.0 : 27.0;
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14),
+        padding: EdgeInsets.symmetric(vertical: vPad),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: Text(
@@ -37,9 +45,10 @@ class SelectorRow extends StatelessWidget {
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontFamily: 'Cormorant',
-                  fontSize: 22,
+                  fontSize: labelSize,
                   fontWeight: FontWeight.w700,
                   color: hintColor,
+                  height: compactVertical ? 1.05 : null,
                 ),
               ),
             ),
@@ -51,7 +60,7 @@ class SelectorRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Cormorant',
-                  fontSize: 26,
+                  fontSize: valueSize,
                   fontWeight: FontWeight.w700,
                   color: textColor,
                 ),
@@ -61,7 +70,7 @@ class SelectorRow extends StatelessWidget {
               const SizedBox(width: 6),
               Icon(
                 Icons.keyboard_arrow_down_rounded,
-                size: 24,
+                size: 25,
                 color: hintColor,
               ),
             ],

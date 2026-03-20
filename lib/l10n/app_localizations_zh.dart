@@ -39,19 +39,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings => '设置';
 
   @override
-  String get baseCurrency => '首选货币一';
+  String get baseCurrency => '首选货币\n一';
 
   @override
-  String get row2Currency => '首选货币二';
+  String get row2Currency => '首选货币\n二';
 
   @override
-  String get row3Currency => '首选货币三';
-
-  @override
-  String get showRow2 => '显示/隐藏';
-
-  @override
-  String get showRow3 => '显示/隐藏';
+  String get row3Currency => '首选货币\n三';
 
   @override
   String get done => '完成';
@@ -64,4 +58,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get language => '语言';
+
+  @override
+  String get thirdCurrencyRow => '第三货币行';
 }

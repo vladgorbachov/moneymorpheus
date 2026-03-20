@@ -175,32 +175,20 @@ abstract class AppLocalizations {
   /// No description provided for @baseCurrency.
   ///
   /// In en, this message translates to:
-  /// **'First preferable currency'**
+  /// **'First preferable\ncurrency'**
   String get baseCurrency;
 
   /// No description provided for @row2Currency.
   ///
   /// In en, this message translates to:
-  /// **'Second preferable currency'**
+  /// **'Second preferable\ncurrency'**
   String get row2Currency;
 
   /// No description provided for @row3Currency.
   ///
   /// In en, this message translates to:
-  /// **'Third preferable currency'**
+  /// **'Third preferable\ncurrency'**
   String get row3Currency;
-
-  /// No description provided for @showRow2.
-  ///
-  /// In en, this message translates to:
-  /// **'Show/Hide'**
-  String get showRow2;
-
-  /// No description provided for @showRow3.
-  ///
-  /// In en, this message translates to:
-  /// **'Show/Hide'**
-  String get showRow3;
 
   /// No description provided for @done.
   ///
@@ -225,6 +213,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language'**
   String get language;
+
+  /// No description provided for @thirdCurrencyRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Third currency row'**
+  String get thirdCurrencyRow;
 }
 
 class _AppLocalizationsDelegate

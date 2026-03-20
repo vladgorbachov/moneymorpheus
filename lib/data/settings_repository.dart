@@ -45,7 +45,7 @@ class SettingsRepository {
   }
 
   Future<bool> getIsRow3Visible() async {
-    return (await _prefs.getBool(_keyIsRow3Visible)) ?? true;
+    return (await _prefs.getBool(_keyIsRow3Visible)) ?? false;
   }
 
   Future<bool> getIsDarkMode() async {

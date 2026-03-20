@@ -10,13 +10,12 @@
   "searchCrypto": "Пошук криптовалюти",
   "searchLanguage": "Пошук мови",
   "settings": "Налаштування",
-  "baseCurrency": "Перша бажана валюта",
-  "row2Currency": "Друга бажана валюта",
-  "row3Currency": "Третя бажана валюта",
-  "showRow2": "Показати/Сховати",
-  "showRow3": "Показати/Сховати",
+  "baseCurrency": "Перша бажана\nвалюта",
+  "row2Currency": "Друга бажана\nвалюта",
+  "row3Currency": "Третя бажана\nвалюта",
   "done": "Готово",
   "darkMode": "Темний режим",
   "lightMode": "Світлий режим",
-  "language": "Мова"
+  "language": "Мова",
+  "thirdCurrencyRow": "Третій ряд валют"
 }

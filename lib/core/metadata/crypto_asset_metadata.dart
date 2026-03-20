@@ -77,7 +77,7 @@ class _Fallback extends StatelessWidget {
         letter,
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 14,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
       ),

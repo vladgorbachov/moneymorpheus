@@ -1,55 +1,55 @@
 import 'package:flutter/material.dart';
 
-// Dark theme
+// Reference converter UI (light): teal top → mint / light green bottom
+const Color refLightGradientTop = Color(0xFF26C6DA);
+const Color refLightGradientMid = Color(0xFFC8E8D8);
+const Color refLightGradientBottom = Color(0xFFE8F5E9);
+
+/// Light numpad: two tones darker than reference teal/coral for readability.
+const Color refLightKeypadTeal = Color(0xFF006978);
+const Color refLightKeypadCoral = Color(0xFFD84315);
+
+// Reference converter UI (dark): deep indigo → magenta
+const Color refDarkGradientTop = Color(0xFF1E0F3D);
+const Color refDarkGradientBottom = Color(0xFFC2185B);
+
+// Legacy (theme surfaces, glass accents)
 const Color darkBackgroundColor = Color(0xFF0D0524);
-const Color darkSphereColor1 = Color(0xFF3C1A65);
-const Color darkSphereColor2 = Color(0xFF25113D);
 const Color accentColor = Color(0xFF9568C9);
 const Color darkAccentColor = Color(0xFF9568C9);
-
-// Light theme
 const Color lightBackgroundColor = Color(0xFFF1F8F7);
-const Color lightSphereColor1 = Color(0xFFA0E3D5);
-const Color lightSphereColor2 = Color(0xFFC6F1E5);
 const Color lightAccentColor = Color(0xFF49B8A5);
 
-// Gradients for main screen
-const Color darkGradientStart = Color(0xFF9568C9);
-const Color darkGradientEnd = Color(0xFF0D0524);
-const Color lightGradientStart = Color(0xFF49B8A5);
-const Color lightGradientEnd = Color(0xFFF1F8F7);
-
-const String lightWallpaperAsset = 'assets/pictures/light_wallpaper.jpg';
-const String darkWallpaperAsset = 'assets/pictures/dark_wallpaper.jpg';
-
-String themedWallpaperAsset(bool isDarkMode) =>
-    isDarkMode ? darkWallpaperAsset : lightWallpaperAsset;
-
-Decoration buildThemedWallpaper(bool isDarkMode) {
-  final overlay = isDarkMode
-      ? [darkGradientStart.withValues(alpha: 0.68), darkGradientEnd.withValues(alpha: 0.88)]
-      : [lightGradientStart.withValues(alpha: 0.32), lightGradientEnd.withValues(alpha: 0.72)];
-
-  return BoxDecoration(
-    image: DecorationImage(
-      image: AssetImage(themedWallpaperAsset(isDarkMode)),
-      fit: BoxFit.cover,
-      colorFilter: ColorFilter.mode(
-        isDarkMode
-            ? Colors.black.withValues(alpha: 0.12)
-            : Colors.white.withValues(alpha: 0.06),
-        BlendMode.srcATop,
+/// Main converter + crypto list/detail: full-screen vertical gradient (no wallpaper).
+BoxDecoration converterScreenDecoration(bool isDarkMode) {
+  if (isDarkMode) {
+    return const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [refDarkGradientTop, refDarkGradientBottom],
       ),
-    ),
+    );
+  }
+  return const BoxDecoration(
     gradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: overlay,
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        refLightGradientTop,
+        refLightGradientMid,
+        refLightGradientBottom,
+      ],
+      stops: [0.0, 0.45, 1.0],
     ),
   );
 }
 
-BoxDecoration glassButtonDecoration({required bool isDarkMode, BorderRadius? borderRadius, bool highlight = false}) {
+BoxDecoration glassButtonDecoration({
+  required bool isDarkMode,
+  BorderRadius? borderRadius,
+  bool highlight = false,
+}) {
   final accent = isDarkMode ? accentColor : lightAccentColor;
   return BoxDecoration(
     borderRadius: borderRadius ?? BorderRadius.circular(18),
@@ -72,7 +72,11 @@ BoxDecoration glassButtonDecoration({required bool isDarkMode, BorderRadius? bor
         offset: const Offset(-2, -2),
       ),
       BoxShadow(
-        color: accent.withValues(alpha: highlight ? (isDarkMode ? 0.22 : 0.16) : (isDarkMode ? 0.14 : 0.08)),
+        color: accent.withValues(
+          alpha: highlight
+              ? (isDarkMode ? 0.22 : 0.16)
+              : (isDarkMode ? 0.14 : 0.08),
+        ),
         blurRadius: highlight ? 18 : 12,
         spreadRadius: highlight ? 1.5 : 0.2,
       ),
