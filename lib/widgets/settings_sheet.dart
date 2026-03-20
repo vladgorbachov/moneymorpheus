@@ -6,6 +6,7 @@ import 'package:moneymorpheus/l10n/app_localizations.dart';
 
 import '../core/constants.dart';
 import '../core/metadata/language_metadata.dart';
+import '../data/settings_repository.dart';
 import '../providers/settings_provider.dart';
 import 'asset_picker.dart';
 import 'selector_row.dart';
@@ -131,8 +132,7 @@ class SettingsSheet extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerRight,
+                    Center(
                       child: Text(
                         l10n.settings,
                         style: TextStyle(
@@ -150,6 +150,33 @@ class SettingsSheet extends ConsumerWidget {
                       (v) => ref.read(settingsProvider.notifier).setIsDarkMode(v),
                       hintColor,
                       isDark,
+                    ),
+                    Divider(height: 1, color: dividerColor),
+                    _buildSwitch(
+                      l10n.speakConversionResult,
+                      settings.speechOutputEnabled,
+                      (v) => ref
+                          .read(settingsProvider.notifier)
+                          .setSpeechOutputEnabled(v),
+                      hintColor,
+                      isDark,
+                    ),
+                    Divider(height: 1, color: dividerColor),
+                    _buildSelectorRow(
+                      context,
+                      ref,
+                      l10n.voiceUnderstanding,
+                      settings.voiceInterpretation ==
+                              VoiceInterpretationMode.openAi
+                          ? l10n.voiceOpenAiLabel
+                          : l10n.voiceDeviceLabel,
+                      isDark,
+                      onTap: () => _showVoiceModePicker(
+                        context,
+                        ref,
+                        settings.voiceInterpretation,
+                        l10n,
+                      ),
                     ),
                     Divider(height: 1, color: dividerColor),
                     _buildSelectorRow(
@@ -293,6 +320,47 @@ class SettingsSheet extends ConsumerWidget {
       isDarkMode: isDark,
       compactVertical: compactVertical,
     );
+  }
+
+  static Future<void> _showVoiceModePicker(
+    BuildContext context,
+    WidgetRef ref,
+    VoiceInterpretationMode current,
+    AppLocalizations l10n,
+  ) async {
+    final chosen = await showDialog<VoiceInterpretationMode>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.voiceUnderstanding),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(
+                current == VoiceInterpretationMode.openAi
+                    ? Icons.check_circle
+                    : Icons.circle_outlined,
+              ),
+              title: Text(l10n.voiceOpenAiLabel),
+              onTap: () => Navigator.pop(ctx, VoiceInterpretationMode.openAi),
+            ),
+            ListTile(
+              leading: Icon(
+                current == VoiceInterpretationMode.deviceRecognizer
+                    ? Icons.check_circle
+                    : Icons.circle_outlined,
+              ),
+              title: Text(l10n.voiceDeviceLabel),
+              onTap: () =>
+                  Navigator.pop(ctx, VoiceInterpretationMode.deviceRecognizer),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (chosen != null) {
+      await ref.read(settingsProvider.notifier).setVoiceInterpretation(chosen);
+    }
   }
 
   Widget _buildSwitch(

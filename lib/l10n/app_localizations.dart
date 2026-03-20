@@ -219,6 +219,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Third currency row'**
   String get thirdCurrencyRow;
+
+  /// No description provided for @cryptoSortMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort list'**
+  String get cryptoSortMenu;
+
+  /// No description provided for @cryptoSortVolumeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'24h USDT volume: high → low'**
+  String get cryptoSortVolumeDesc;
+
+  /// No description provided for @cryptoSortVolumeAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'24h USDT volume: low → high'**
+  String get cryptoSortVolumeAsc;
+
+  /// No description provided for @cryptoSortSymbolAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol A–Z'**
+  String get cryptoSortSymbolAsc;
+
+  /// No description provided for @cryptoSortSymbolDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol Z–A'**
+  String get cryptoSortSymbolDesc;
+
+  /// No description provided for @speakConversionResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak conversion result'**
+  String get speakConversionResult;
+
+  /// No description provided for @voiceUnderstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice conversion'**
+  String get voiceUnderstanding;
+
+  /// No description provided for @voiceOpenAiLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenAI (any language)'**
+  String get voiceOpenAiLabel;
+
+  /// No description provided for @voiceDeviceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Device: number only'**
+  String get voiceDeviceLabel;
+
+  /// No description provided for @voiceCouldNotParse.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not parse phrase; entered number only'**
+  String get voiceCouldNotParse;
+
+  /// No description provided for @voiceAddOpenAiKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add OPENAI_API_KEY to .env for full voice conversion'**
+  String get voiceAddOpenAiKeyHint;
 }
 
 class _AppLocalizationsDelegate

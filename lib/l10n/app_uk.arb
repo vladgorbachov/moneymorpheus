@@ -17,5 +17,16 @@
   "darkMode": "Темний режим",
   "lightMode": "Світлий режим",
   "language": "Мова",
-  "thirdCurrencyRow": "Третій ряд валют"
+  "thirdCurrencyRow": "Третій ряд валют",
+  "cryptoSortMenu": "Sort list",
+  "cryptoSortVolumeDesc": "24h USDT volume: high → low",
+  "cryptoSortVolumeAsc": "24h USDT volume: low → high",
+  "cryptoSortSymbolAsc": "Symbol A–Z",
+  "cryptoSortSymbolDesc": "Symbol Z–A",
+  "speakConversionResult": "Speak conversion result",
+  "voiceUnderstanding": "Voice conversion",
+  "voiceOpenAiLabel": "OpenAI (any language)",
+  "voiceDeviceLabel": "Device: number only",
+  "voiceCouldNotParse": "Could not parse phrase; entered number only",
+  "voiceAddOpenAiKeyHint": "Add OPENAI_API_KEY to .env for full voice conversion"
 }

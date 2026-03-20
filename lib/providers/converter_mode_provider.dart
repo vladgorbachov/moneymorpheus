@@ -22,9 +22,13 @@ class ConverterModeNotifier extends AsyncNotifier<ConverterMode> {
     final next = current == ConverterMode.fiat
         ? ConverterMode.crypto
         : ConverterMode.fiat;
+    await setMode(next);
+  }
+
+  Future<void> setMode(ConverterMode mode) async {
     final prefs = ref.read(sharedPreferencesAsyncProvider);
-    await prefs.setString(_keyConverterMode, next.name);
-    state = AsyncData(next);
+    await prefs.setString(_keyConverterMode, mode.name);
+    state = AsyncData(mode);
   }
 }
 

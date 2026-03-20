@@ -25,9 +25,10 @@ class CurrencyRow extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final h = constraints.maxHeight.isFinite ? constraints.maxHeight : 120.0;
-        final codeSize = (h * 0.16).clamp(15.0, 20.0) + 1;
-        // Amount column: +2 vs previous sizing (both themes).
-        final amountSize = (h * 0.36).clamp(26.0, 48.0) + 3;
+        // Code: +50% vs base; amount: same base scale then −30% (user-tuned readability).
+        final codeSize = ((h * 0.16).clamp(15.0, 20.0) + 1) * 1.5;
+        final amountSize =
+            (((h * 0.36).clamp(26.0, 48.0) + 3) * 1.5) * 0.7;
         final iconSize = codeSize * 1.15;
 
         return GestureDetector(

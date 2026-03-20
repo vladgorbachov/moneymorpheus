@@ -4,6 +4,7 @@ import '../core/crypto_logos.dart';
 import '../data/models/crypto_kline.dart';
 import '../data/models/crypto_ticker.dart';
 import '../data/services/binance_api_service.dart';
+import 'crypto_list_sort_provider.dart';
 import 'favourites_provider.dart';
 import 'settings_provider.dart';
 
@@ -35,6 +36,11 @@ final cryptoFilteredTickersProvider = FutureProvider<List<CryptoTicker>>((
   final tickers = await ref.watch(cryptoTickersProvider.future);
   final query = ref.watch(cryptoSearchQueryProvider).trim().toUpperCase();
   final favouritesAsync = ref.watch(favouritesProvider);
+  final sortAsync = ref.watch(cryptoListSortProvider);
+  final sort = switch (sortAsync) {
+    AsyncData(:final value) => value,
+    _ => CryptoListSort.quoteVolumeDesc,
+  };
 
   final favourites = switch (favouritesAsync) {
     AsyncData(:final value) => value,
@@ -53,12 +59,24 @@ final cryptoFilteredTickersProvider = FutureProvider<List<CryptoTicker>>((
     }).toList();
   }
 
+  int compareBySort(CryptoTicker a, CryptoTicker b) {
+    switch (sort) {
+      case CryptoListSort.quoteVolumeDesc:
+        return b.quoteVolume24h.compareTo(a.quoteVolume24h);
+      case CryptoListSort.quoteVolumeAsc:
+        return a.quoteVolume24h.compareTo(b.quoteVolume24h);
+      case CryptoListSort.symbolAsc:
+        return a.baseSymbol.toUpperCase().compareTo(b.baseSymbol.toUpperCase());
+      case CryptoListSort.symbolDesc:
+        return b.baseSymbol.toUpperCase().compareTo(a.baseSymbol.toUpperCase());
+    }
+  }
+
   filtered.sort((a, b) {
     final aFav = favourites.contains(a.baseSymbol);
     final bFav = favourites.contains(b.baseSymbol);
-    if (aFav && !bFav) return -1;
-    if (!aFav && bFav) return 1;
-    return 0;
+    if (aFav != bFav) return aFav ? -1 : 1;
+    return compareBySort(a, b);
   });
 
   return filtered;

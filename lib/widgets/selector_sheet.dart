@@ -7,8 +7,7 @@ import 'package:moneymorpheus/l10n/app_localizations.dart';
 import '../core/constants.dart';
 import '../core/selector_item.dart';
 
-/// Reusable bottom sheet with search + carousel for selecting an item.
-/// Unified style for dark/light mode, centered text, clear selection highlight.
+/// Reusable bottom sheet with search + list/wheel for selecting an item.
 class SelectorSheet extends StatefulWidget {
   final List<SelectorItem>? items;
   final Future<List<SelectorItem>>? itemsFuture;
@@ -58,7 +57,10 @@ class SelectorSheet extends StatefulWidget {
 class _SelectorSheetState extends State<SelectorSheet> {
   final _searchController = TextEditingController();
   final ScrollController _lightListScrollController = ScrollController();
+  late final FixedExtentScrollController _wheelController;
+
   String _searchQuery = '';
+  String? _lastSyncedSearch;
   int _selectedIndex = 0;
 
   static const double _lightListRowExtent = 53;
@@ -66,8 +68,11 @@ class _SelectorSheetState extends State<SelectorSheet> {
   @override
   void initState() {
     super.initState();
+    _wheelController = FixedExtentScrollController();
     _searchController.addListener(() {
-      setState(() => _searchQuery = _searchController.text.toLowerCase());
+      final q = _searchController.text.toLowerCase();
+      if (q == _searchQuery) return;
+      setState(() => _searchQuery = q);
     });
   }
 
@@ -75,6 +80,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
   void dispose() {
     _searchController.dispose();
     _lightListScrollController.dispose();
+    _wheelController.dispose();
     super.dispose();
   }
 
@@ -94,6 +100,32 @@ class _SelectorSheetState extends State<SelectorSheet> {
     return items.where((e) {
       return e.searchableText.contains(_searchQuery);
     }).toList();
+  }
+
+  /// When the search string changes, re-align selection with [currentId] in the filtered list.
+  void _syncSelectionToSearch(List<SelectorItem> allItems) {
+    final sq = _searchController.text.toLowerCase();
+    if (_lastSyncedSearch == sq) return;
+    _lastSyncedSearch = sq;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final filtered = _filteredItems(allItems);
+      if (filtered.isEmpty) {
+        setState(() => _selectedIndex = 0);
+        return;
+      }
+      final idx = filtered.indexWhere((e) => e.id == widget.currentId);
+      final newIdx = idx >= 0 ? idx : 0;
+      setState(() => _selectedIndex = newIdx);
+      if (widget.isDarkMode) {
+        if (_wheelController.hasClients && newIdx < filtered.length) {
+          _wheelController.jumpToItem(newIdx);
+        }
+      } else {
+        _scheduleScrollLightListToSelection(filtered.length);
+      }
+    });
   }
 
   Color _textColor() => widget.isDarkMode
@@ -168,20 +200,17 @@ class _SelectorSheetState extends State<SelectorSheet> {
   }
 
   Widget _buildWithItems(BuildContext context, List<SelectorItem> items) {
+    _syncSelectionToSearch(items);
     final filtered = _filteredItems(items);
+
     if (filtered.isNotEmpty && _selectedIndex >= filtered.length) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) setState(() => _selectedIndex = filtered.length - 1);
+        if (mounted) {
+          setState(() => _selectedIndex = filtered.length - 1);
+        }
       });
     }
-    if (filtered.isNotEmpty && _selectedIndex < filtered.length) {
-      final idx = filtered.indexWhere((e) => e.id == widget.currentId);
-      if (idx >= 0 && idx != _selectedIndex) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) setState(() => _selectedIndex = idx);
-        });
-      }
-    }
+
     final l10n = AppLocalizations.of(context)!;
 
     if (!widget.isDarkMode && filtered.isNotEmpty) {
@@ -194,7 +223,6 @@ class _SelectorSheetState extends State<SelectorSheet> {
     return _buildLightPickerContent(context, filtered, l10n);
   }
 
-  /// Dark theme: wheel carousel (unchanged behavior).
   Widget _buildDarkPickerContent(
     BuildContext context,
     List<SelectorItem> filtered,
@@ -268,6 +296,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                           ),
                         )
                       : ListWheelScrollView.useDelegate(
+                          controller: _wheelController,
                           itemExtent: 52,
                           diameterRatio: 1.5,
                           physics: const FixedExtentScrollPhysics(),
@@ -280,55 +309,70 @@ class _SelectorSheetState extends State<SelectorSheet> {
                             builder: (context, index) {
                               final item = filtered[index];
                               final isSelected = index == _selectedIndex;
-                              return Center(
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 150),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? _selectionColor()
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      if (item.leading != null) ...[
-                                        item.leading!,
-                                        const SizedBox(width: 12),
-                                      ],
-                                      Text(
-                                        item.label,
-                                        style: TextStyle(
-                                          fontFamily: 'DejaVuSans',
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 19,
-                                          color: _textColor(),
-                                        ),
-                                      ),
-                                      if (item.subtitle != null &&
-                                          item.subtitle!.isNotEmpty) ...[
-                                        const SizedBox(width: 12),
-                                        ConstrainedBox(
-                                          constraints: const BoxConstraints(
-                                            maxWidth: 180,
+                              return GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  setState(() => _selectedIndex = index);
+                                  _wheelController.animateToItem(
+                                    index,
+                                    duration: const Duration(
+                                      milliseconds: 220,
+                                    ),
+                                    curve: Curves.easeOutCubic,
+                                  );
+                                },
+                                child: Center(
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 150),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? _selectionColor()
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        if (item.leading != null) ...[
+                                          item.leading!,
+                                          const SizedBox(width: 12),
+                                        ],
+                                        Text(
+                                          item.label,
+                                          style: TextStyle(
+                                            fontFamily: 'DejaVuSans',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 19,
+                                            color: _textColor(),
                                           ),
-                                          child: Text(
-                                            item.subtitle!,
-                                            style: TextStyle(
-                                              fontFamily: 'DejaVuSans',
-                                              fontSize: 15,
-                                              color: _hintColor(),
+                                        ),
+                                        if (item.subtitle != null &&
+                                            item.subtitle!.isNotEmpty) ...[
+                                          const SizedBox(width: 12),
+                                          ConstrainedBox(
+                                            constraints: const BoxConstraints(
+                                              maxWidth: 180,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
+                                            child: Text(
+                                              item.subtitle!,
+                                              style: TextStyle(
+                                                fontFamily: 'DejaVuSans',
+                                                fontSize: 15,
+                                                color: _hintColor(),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ],
-                                    ],
+                                    ),
                                   ),
                                 ),
                               );
@@ -363,7 +407,6 @@ class _SelectorSheetState extends State<SelectorSheet> {
     );
   }
 
-  /// Light theme: flat list + shell aligned with [SettingsSheet] (no wheel shading).
   Widget _buildLightPickerContent(
     BuildContext context,
     List<SelectorItem> filtered,

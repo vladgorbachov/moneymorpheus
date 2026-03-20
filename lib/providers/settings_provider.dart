@@ -15,18 +15,22 @@ class SettingsState {
   final bool isRow3Visible;
   final bool isDarkMode;
   final String locale;
+  final bool speechOutputEnabled;
+  final VoiceInterpretationMode voiceInterpretation;
 
   const SettingsState({
-    this.baseCurrency = 'USD',
-    this.row2Currency = 'EUR',
-    this.row3Currency = 'UAH',
+    this.baseCurrency = 'EUR',
+    this.row2Currency = 'USD',
+    this.row3Currency = 'USD',
     this.baseCrypto = 'BTC',
     this.row2Crypto = 'ETH',
-    this.row3Crypto = 'USDT',
+    this.row3Crypto = 'ETH',
     this.isRow2Visible = true,
     this.isRow3Visible = false,
     this.isDarkMode = true,
     this.locale = 'en',
+    this.speechOutputEnabled = true,
+    this.voiceInterpretation = VoiceInterpretationMode.openAi,
   });
 
   SettingsState copyWith({
@@ -40,6 +44,8 @@ class SettingsState {
     bool? isRow3Visible,
     bool? isDarkMode,
     String? locale,
+    bool? speechOutputEnabled,
+    VoiceInterpretationMode? voiceInterpretation,
   }) {
     return SettingsState(
       baseCurrency: baseCurrency ?? this.baseCurrency,
@@ -52,6 +58,8 @@ class SettingsState {
       isRow3Visible: isRow3Visible ?? this.isRow3Visible,
       isDarkMode: isDarkMode ?? this.isDarkMode,
       locale: locale ?? this.locale,
+      speechOutputEnabled: speechOutputEnabled ?? this.speechOutputEnabled,
+      voiceInterpretation: voiceInterpretation ?? this.voiceInterpretation,
     );
   }
 
@@ -91,6 +99,8 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     final isRow3Visible = await _repository.getIsRow3Visible();
     final isDarkMode = await _repository.getIsDarkMode();
     final locale = await _repository.getLocale();
+    final speechOutputEnabled = await _repository.getSpeechOutputEnabled();
+    final voiceRaw = await _repository.getVoiceInterpretation();
     return SettingsState(
       baseCurrency: baseCurrency,
       row2Currency: row2Currency,
@@ -102,6 +112,8 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
       isRow3Visible: isRow3Visible,
       isDarkMode: isDarkMode,
       locale: locale,
+      speechOutputEnabled: speechOutputEnabled,
+      voiceInterpretation: VoiceInterpretationModeStorage.parse(voiceRaw),
     );
   }
 
@@ -188,6 +200,20 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     );
   }
 
+  Future<void> setSpeechOutputEnabled(bool value) async {
+    await _update(
+      () => _repository.setSpeechOutputEnabled(value),
+      (s) => s.copyWith(speechOutputEnabled: value),
+    );
+  }
+
+  Future<void> setVoiceInterpretation(VoiceInterpretationMode value) async {
+    await _update(
+      () => _repository.setVoiceInterpretation(value.storageValue),
+      (s) => s.copyWith(voiceInterpretation: value),
+    );
+  }
+
   Future<void> swapBaseWithRow2() async {
     final current = switch (state) {
       AsyncData(:final value) => value,
@@ -197,17 +223,9 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     await _repository.setBaseCurrency(current.row2Currency);
     await _repository.setRow2Currency(current.baseCurrency);
     state = AsyncValue.data(
-      SettingsState(
+      current.copyWith(
         baseCurrency: current.row2Currency,
         row2Currency: current.baseCurrency,
-        row3Currency: current.row3Currency,
-        baseCrypto: current.baseCrypto,
-        row2Crypto: current.row2Crypto,
-        row3Crypto: current.row3Crypto,
-        isRow2Visible: current.isRow2Visible,
-        isRow3Visible: current.isRow3Visible,
-        isDarkMode: current.isDarkMode,
-        locale: current.locale,
       ),
     );
   }
@@ -221,17 +239,9 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     await _repository.setBaseCrypto(current.row2Crypto);
     await _repository.setRow2Crypto(current.baseCrypto);
     state = AsyncValue.data(
-      SettingsState(
-        baseCurrency: current.baseCurrency,
-        row2Currency: current.row2Currency,
-        row3Currency: current.row3Currency,
+      current.copyWith(
         baseCrypto: current.row2Crypto,
         row2Crypto: current.baseCrypto,
-        row3Crypto: current.row3Crypto,
-        isRow2Visible: current.isRow2Visible,
-        isRow3Visible: current.isRow3Visible,
-        isDarkMode: current.isDarkMode,
-        locale: current.locale,
       ),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-// Reference converter UI (light): teal top → mint / light green bottom
-const Color refLightGradientTop = Color(0xFF26C6DA);
-const Color refLightGradientMid = Color(0xFFC8E8D8);
-const Color refLightGradientBottom = Color(0xFFE8F5E9);
+// Reference converter UI (light): teal top → mint / light green bottom (~2 tones darker vs prior).
+const Color refLightGradientTop = Color(0xFF1BA8BE);
+const Color refLightGradientMid = Color(0xFFA8D8C8);
+const Color refLightGradientBottom = Color(0xFFD0E4D4);
 
 /// Light numpad: two tones darker than reference teal/coral for readability.
 const Color refLightKeypadTeal = Color(0xFF006978);

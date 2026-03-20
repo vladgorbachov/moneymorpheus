@@ -7,14 +7,15 @@ import 'package:moneymorpheus/l10n/app_localizations.dart';
 import '../core/constants.dart';
 import '../core/crypto_logos.dart';
 import '../data/models/crypto_ticker.dart';
+import '../providers/crypto_list_sort_provider.dart';
 import '../providers/crypto_provider.dart';
 import '../providers/favourites_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/crypto_logo.dart';
 import 'crypto_detail_screen.dart';
 
-/// Light theme: primary text on crypto screens (replaces white).
-const _lightCryptoPrimary = Color(0xFF00E6BF);
+/// Light theme: primary text on crypto list (replaces white / mint accent).
+const _lightCryptoPrimary = Color(0xFF043536);
 
 /// Light theme: secondary / muted text (replaces gray).
 const _lightCryptoSecondary = Color(0xFF005B63);
@@ -59,6 +60,14 @@ class _CryptoMarketContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tickersAsync = ref.watch(cryptoFilteredTickersProvider);
+    final sortAsync = ref.watch(cryptoListSortProvider);
+    final currentSort = switch (sortAsync) {
+      AsyncData(:final value) => value,
+      _ => CryptoListSort.quoteVolumeDesc,
+    };
+    final sortIconColor = isDarkMode
+        ? Colors.white.withValues(alpha: 0.92)
+        : _lightCryptoPrimary;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -106,44 +115,117 @@ class _CryptoMarketContent extends ConsumerWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(22),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-                    child: TextField(
-                      onChanged: (v) => ref.read(cryptoSearchQueryProvider.notifier).updateQuery(v),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'DejaVuSans',
-                        fontSize: 17,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: l10n.searchCrypto,
-                        hintStyle: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.62),
-                          fontFamily: 'DejaVuSans',
-                        ),
-                        prefixIcon: Icon(Icons.search, color: Colors.white.withValues(alpha: 0.65)),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: isDarkMode ? 0.08 : 0.16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(22),
-                          borderSide: BorderSide(
-                            color: Colors.white.withValues(alpha: 0.18),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(22),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                          child: TextField(
+                            onChanged: (v) => ref
+                                .read(cryptoSearchQueryProvider.notifier)
+                                .updateQuery(v),
+                            style: TextStyle(
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : _lightCryptoPrimary,
+                              fontFamily: 'DejaVuSans',
+                              fontSize: 17,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: l10n.searchCrypto,
+                              hintStyle: TextStyle(
+                                color: isDarkMode
+                                    ? Colors.white.withValues(alpha: 0.62)
+                                    : _lightCryptoSecondary.withValues(
+                                        alpha: 0.75,
+                                      ),
+                                fontFamily: 'DejaVuSans',
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: isDarkMode
+                                    ? Colors.white.withValues(alpha: 0.65)
+                                    : _lightCryptoSecondary.withValues(
+                                        alpha: 0.85,
+                                      ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white.withValues(
+                                alpha: isDarkMode ? 0.08 : 0.16,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(22),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.18),
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(22),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.18),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(22),
+                                borderSide: BorderSide(
+                                  color: (isDarkMode
+                                          ? accentColor
+                                          : lightAccentColor)
+                                      .withValues(alpha: 0.52),
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
+                              ),
+                            ),
                           ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(22),
-                          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.18)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(22),
-                          borderSide: BorderSide(color: (isDarkMode ? accentColor : lightAccentColor).withValues(alpha: 0.52)),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Material(
+                      color: Colors.transparent,
+                      child: PopupMenuButton<CryptoListSort>(
+                        tooltip: l10n.cryptoSortMenu,
+                        initialValue: currentSort,
+                        icon: Icon(
+                          Icons.sort_rounded,
+                          color: sortIconColor,
+                          size: 28,
+                        ),
+                        color: Colors.white.withValues(
+                          alpha: isDarkMode ? 0.14 : 0.92,
+                        ),
+                        onSelected: (CryptoListSort s) {
+                          ref
+                              .read(cryptoListSortProvider.notifier)
+                              .setSort(s);
+                        },
+                        itemBuilder: (ctx) => [
+                          PopupMenuItem(
+                            value: CryptoListSort.quoteVolumeDesc,
+                            child: Text(l10n.cryptoSortVolumeDesc),
+                          ),
+                          PopupMenuItem(
+                            value: CryptoListSort.quoteVolumeAsc,
+                            child: Text(l10n.cryptoSortVolumeAsc),
+                          ),
+                          PopupMenuItem(
+                            value: CryptoListSort.symbolAsc,
+                            child: Text(l10n.cryptoSortSymbolAsc),
+                          ),
+                          PopupMenuItem(
+                            value: CryptoListSort.symbolDesc,
+                            child: Text(l10n.cryptoSortSymbolDesc),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Expanded(

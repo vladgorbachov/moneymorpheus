@@ -61,4 +61,38 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get thirdCurrencyRow => 'Третья строка валют';
+
+  @override
+  String get cryptoSortMenu => 'Сортировка';
+
+  @override
+  String get cryptoSortVolumeDesc => 'Объём USDT 24ч: больше → меньше';
+
+  @override
+  String get cryptoSortVolumeAsc => 'Объём USDT 24ч: меньше → больше';
+
+  @override
+  String get cryptoSortSymbolAsc => 'Символ А–Я';
+
+  @override
+  String get cryptoSortSymbolDesc => 'Символ Я–А';
+
+  @override
+  String get speakConversionResult => 'Озвучивать результат';
+
+  @override
+  String get voiceUnderstanding => 'Голосовой перевод';
+
+  @override
+  String get voiceOpenAiLabel => 'OpenAI (любой язык)';
+
+  @override
+  String get voiceDeviceLabel => 'Устройство: только число';
+
+  @override
+  String get voiceCouldNotParse => 'Не разобрал фразу; введено только число';
+
+  @override
+  String get voiceAddOpenAiKeyHint =>
+      'Добавьте OPENAI_API_KEY в .env для полного голосового ввода';
 }

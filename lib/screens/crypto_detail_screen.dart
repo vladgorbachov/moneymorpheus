@@ -9,7 +9,7 @@ import '../providers/crypto_provider.dart';
 import '../providers/favourites_provider.dart';
 
 /// Light theme: replaces white body text on crypto detail.
-const _lightCryptoPrimary = Color(0xFF00E6BF);
+const _lightCryptoPrimary = Color(0xFF043536);
 
 /// Light theme: replaces gray / muted labels.
 const _lightCryptoSecondary = Color(0xFF005B63);
