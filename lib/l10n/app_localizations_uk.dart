@@ -60,9 +60,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get language => 'Мова';
 
   @override
-  String get thirdCurrencyRow => 'Третій ряд валют';
-
-  @override
   String get cryptoSortMenu => 'Sort list';
 
   @override

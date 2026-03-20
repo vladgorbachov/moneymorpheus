@@ -33,8 +33,9 @@ flutter:
 
   assets:
     - .env
-    - assets/bitcoindown03_generated.jpg
     - assets/logo.png
+    - assets/market_logo_dark.png
+    - assets/market_logo_light.jpg
 
   fonts:
     - family: DejaVuSans

@@ -212,7 +212,7 @@ class _CryptoNavButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final h = (topHeight * 0.82).clamp(40.0, 64.0);
-    final borderColor = Colors.white.withValues(alpha: isDark ? 0.38 : 0.42);
+    final glassBorder = Colors.white.withValues(alpha: isDark ? 0.42 : 0.48);
 
     return Center(
       child: Material(
@@ -228,63 +228,41 @@ class _CryptoNavButton extends ConsumerWidget {
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: borderColor, width: 1.2),
+              border: Border.all(color: glassBorder, width: 1.25),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  color: Colors.white.withValues(alpha: isDark ? 0.22 : 0.32),
+                  blurRadius: 5,
+                  spreadRadius: -0.5,
+                  offset: const Offset(-1, -1),
+                ),
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: isDark ? 0.06 : 0.12),
+                  blurRadius: 4,
+                  offset: const Offset(1, 1),
                 ),
               ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(999),
               child: SizedBox.expand(
-                child: _BitcoinDownArtwork(isDark: isDark),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Image.asset(
+                    isDark
+                        ? 'assets/market_logo_dark.png'
+                        : 'assets/market_logo_light.jpg',
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                    gaplessPlayback: true,
+                    filterQuality: FilterQuality.high,
+                  ),
+                ),
               ),
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Fills parent; [BoxFit.contain] keeps ratio. Light/dark tints for visibility.
-/// JPEG background cannot be removed in code; use PNG with alpha for full transparency.
-class _BitcoinDownArtwork extends StatelessWidget {
-  const _BitcoinDownArtwork({required this.isDark});
-
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final base = Image.asset(
-      'assets/bitcoindown03_generated.jpg',
-      fit: BoxFit.contain,
-      alignment: Alignment.center,
-      gaplessPlayback: true,
-      filterQuality: FilterQuality.medium,
-    );
-
-    if (isDark) {
-      return ColorFiltered(
-        colorFilter: const ColorFilter.matrix(<double>[
-          1.12, 0, 0, 0, 18,
-          0, 1.1, 0, 0, 18,
-          0, 0, 1.14, 0, 22,
-          0, 0, 0, 1, 0,
-        ]),
-        child: base,
-      );
-    }
-
-    return ColorFiltered(
-      colorFilter: ColorFilter.mode(
-        refLightKeypadTeal.withValues(alpha: 0.88),
-        BlendMode.multiply,
-      ),
-      child: base,
     );
   }
 }

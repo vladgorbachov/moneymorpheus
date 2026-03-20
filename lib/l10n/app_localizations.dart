@@ -214,12 +214,6 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get language;
 
-  /// No description provided for @thirdCurrencyRow.
-  ///
-  /// In en, this message translates to:
-  /// **'Third currency row'**
-  String get thirdCurrencyRow;
-
   /// No description provided for @cryptoSortMenu.
   ///
   /// In en, this message translates to:

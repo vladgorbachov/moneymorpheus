@@ -60,9 +60,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get language => '语言';
 
   @override
-  String get thirdCurrencyRow => '第三货币行';
-
-  @override
   String get cryptoSortMenu => 'Sort list';
 
   @override

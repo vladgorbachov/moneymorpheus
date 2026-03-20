@@ -10,6 +10,96 @@ import '../providers/settings_provider.dart';
 import 'asset_picker.dart';
 import 'selector_row.dart';
 
+/// Wraps [DraggableScrollableSheet] so dragging past a threshold fully dismisses
+/// the sheet (animate to zero extent) instead of stopping at [minChildSize].
+class _SettingsDraggableHost extends StatefulWidget {
+  const _SettingsDraggableHost({
+    required this.anchoredFromTop,
+    required this.initialChildSize,
+    required this.maxChildSize,
+  });
+
+  final bool anchoredFromTop;
+  final double initialChildSize;
+  final double maxChildSize;
+
+  @override
+  State<_SettingsDraggableHost> createState() => _SettingsDraggableHostState();
+}
+
+class _SettingsDraggableHostState extends State<_SettingsDraggableHost> {
+  late final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
+  bool _popping = false;
+
+  double get _restoreExtent =>
+      widget.anchoredFromTop ? 1.0 : widget.initialChildSize;
+
+  @override
+  void initState() {
+    super.initState();
+    _sheetController.addListener(_onExtentChanged);
+  }
+
+  @override
+  void dispose() {
+    _sheetController.removeListener(_onExtentChanged);
+    _sheetController.dispose();
+    super.dispose();
+  }
+
+  void _onExtentChanged() {
+    if (!mounted || _popping || !_sheetController.isAttached) return;
+    if (_sheetController.size <= 0.02) {
+      _popping = true;
+      Navigator.of(context).maybePop();
+    }
+  }
+
+  void _onPointerUp(PointerUpEvent event) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _popping || !_sheetController.isAttached) return;
+      final s = _sheetController.size;
+      final restore = _restoreExtent;
+      // Finish dismiss when user released after dragging down (incomplete swipe).
+      if (s < 0.72) {
+        _sheetController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 280),
+          curve: Curves.easeOut,
+        );
+        return;
+      }
+      // Snap back toward default height if slightly dragged.
+      if (s < restore - 0.04) {
+        _sheetController.animateTo(
+          restore,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerUp: _onPointerUp,
+      child: DraggableScrollableSheet(
+        controller: _sheetController,
+        initialChildSize: widget.initialChildSize,
+        minChildSize: 0,
+        maxChildSize: widget.maxChildSize,
+        builder: (context, scrollController) => SettingsSheet(
+          anchoredFromTop: widget.anchoredFromTop,
+          scrollController: scrollController,
+        ),
+      ),
+    );
+  }
+}
+
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({
     super.key,
@@ -48,14 +138,10 @@ class SettingsSheet extends ConsumerWidget {
                 left: 20,
                 right: 20,
                 bottom: 0,
-                child: DraggableScrollableSheet(
+                child: const _SettingsDraggableHost(
+                  anchoredFromTop: true,
                   initialChildSize: 1,
-                  minChildSize: 0.35,
                   maxChildSize: 1,
-                  builder: (ctx, scrollController) => SettingsSheet(
-                    anchoredFromTop: true,
-                    scrollController: scrollController,
-                  ),
                 ),
               ),
             ],
@@ -70,14 +156,10 @@ class SettingsSheet extends ConsumerWidget {
       isDismissible: true,
       enableDrag: false,
       backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
+      builder: (context) => const _SettingsDraggableHost(
+        anchoredFromTop: false,
         initialChildSize: 0.8,
-        minChildSize: 0.35,
-        maxChildSize: 0.95,
-        builder: (context, scrollController) => SettingsSheet(
-          anchoredFromTop: false,
-          scrollController: scrollController,
-        ),
+        maxChildSize: 1,
       ),
     );
   }
@@ -277,11 +359,12 @@ class SettingsSheet extends ConsumerWidget {
       ),
       Divider(height: 1, color: dividerColor),
       _buildSwitch(
-        l10n.thirdCurrencyRow,
+        l10n.row3Currency,
         settings.isRow3Visible,
         (v) => ref.read(settingsProvider.notifier).setIsRow3Visible(v),
         hintColor,
         isDark,
+        compactVertical: true,
       ),
       if (settings.isRow3Visible) ...[
         Divider(height: 1, color: dividerColor),
@@ -357,12 +440,16 @@ class SettingsSheet extends ConsumerWidget {
     bool value,
     void Function(bool) onChanged,
     Color hintColor,
-    bool isDark,
-  ) {
+    bool isDark, {
+    bool compactVertical = false,
+  }) {
     final accent = isDark ? accentColor : lightAccentColor;
+    final fontSize = compactVertical ? 21.0 : 25.0;
+    final lineHeight = compactVertical ? 1.05 : null;
+    final vPad = compactVertical ? 7.0 : 12.0;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: EdgeInsets.symmetric(vertical: vPad),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -374,9 +461,10 @@ class SettingsSheet extends ConsumerWidget {
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontFamily: kLarazFontFamily,
-                  fontSize: 25,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.w700,
                   color: hintColor,
+                  height: lineHeight,
                 ),
               ),
             ),

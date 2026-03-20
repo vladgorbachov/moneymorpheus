@@ -17,7 +17,6 @@
   "darkMode": "Mode sombre",
   "lightMode": "Mode clair",
   "language": "Langue",
-  "thirdCurrencyRow": "Troisième ligne de devises",
   "cryptoSortMenu": "Sort list",
   "cryptoSortVolumeDesc": "24h USDT volume: high → low",
   "cryptoSortVolumeAsc": "24h USDT volume: low → high",

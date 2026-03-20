@@ -60,9 +60,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get language => 'اللغة';
 
   @override
-  String get thirdCurrencyRow => 'صف العملة الثالث';
-
-  @override
   String get cryptoSortMenu => 'Sort list';
 
   @override

@@ -17,7 +17,6 @@
   "darkMode": "Modo oscuro",
   "lightMode": "Modo claro",
   "language": "Idioma",
-  "thirdCurrencyRow": "Tercera fila de monedas",
   "cryptoSortMenu": "Sort list",
   "cryptoSortVolumeDesc": "24h USDT volume: high → low",
   "cryptoSortVolumeAsc": "24h USDT volume: low → high",

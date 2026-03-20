@@ -60,9 +60,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get language => 'Langue';
 
   @override
-  String get thirdCurrencyRow => 'Troisième ligne de devises';
-
-  @override
   String get cryptoSortMenu => 'Sort list';
 
   @override

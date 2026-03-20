@@ -17,7 +17,6 @@
   "darkMode": "Тёмный режим",
   "lightMode": "Светлый режим",
   "language": "Язык",
-  "thirdCurrencyRow": "Третья строка валют",
   "cryptoSortMenu": "Сортировка",
   "cryptoSortVolumeDesc": "Объём USDT 24ч: больше → меньше",
   "cryptoSortVolumeAsc": "Объём USDT 24ч: меньше → больше",
