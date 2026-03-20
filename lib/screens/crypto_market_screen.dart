@@ -197,9 +197,9 @@ class _CryptoMarketContent extends ConsumerWidget {
                           color: sortIconColor,
                           size: 28,
                         ),
-                        color: Colors.white.withValues(
-                          alpha: isDarkMode ? 0.14 : 0.92,
-                        ),
+                        color: isDarkMode
+                            ? darkBackgroundColor
+                            : Colors.white.withValues(alpha: 0.92),
                         onSelected: (CryptoListSort s) {
                           ref
                               .read(cryptoListSortProvider.notifier)
