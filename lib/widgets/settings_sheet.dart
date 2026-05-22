@@ -115,16 +115,15 @@ class SettingsSheet extends ConsumerWidget {
 
   /// Opens settings aligned under the main currency card: top edge [currencyPanelTop] − 2 px.
   /// Falls back to bottom sheet when [currencyPanelTop] is null.
-  static Future<void> show(
-    BuildContext context, {
-    double? currencyPanelTop,
-  }) {
+  static Future<void> show(BuildContext context, {double? currencyPanelTop}) {
     if (currencyPanelTop != null) {
       final panelY = currencyPanelTop;
       return showGeneralDialog<void>(
         context: context,
         barrierDismissible: true,
-        barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierLabel: MaterialLocalizations.of(
+          context,
+        ).modalBarrierDismissLabel,
         barrierColor: Colors.black.withValues(alpha: 0.32),
         transitionDuration: const Duration(milliseconds: 260),
         pageBuilder: (dialogContext, animation, secondaryAnimation) {
@@ -242,8 +241,9 @@ class SettingsSheet extends ConsumerWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? accentColor : lightAccentColor)
-                .withValues(alpha: isDark ? 0.16 : 0.08),
+            color: (isDark ? accentColor : lightAccentColor).withValues(
+              alpha: isDark ? 0.16 : 0.08,
+            ),
             blurRadius: 28,
           ),
         ],
@@ -331,11 +331,15 @@ class SettingsSheet extends ConsumerWidget {
         l10n.baseCurrency,
         settings.baseCurrency,
         isDark,
+        compactVertical: true,
         onTap: () => AssetPicker.showFiat(
           context,
           currentId: settings.baseCurrency,
           onSelected: (v) =>
               ref.read(settingsProvider.notifier).setBaseCurrency(v),
+          favourites: settings.fiatFavourites,
+          onToggleFavourite: (v) =>
+              ref.read(settingsProvider.notifier).toggleFiatFavourite(v),
           isDarkMode: isDark,
           searchHint: l10n.searchCurrency,
         ),
@@ -353,6 +357,9 @@ class SettingsSheet extends ConsumerWidget {
           currentId: settings.row2Currency,
           onSelected: (v) =>
               ref.read(settingsProvider.notifier).setRow2Currency(v),
+          favourites: settings.fiatFavourites,
+          onToggleFavourite: (v) =>
+              ref.read(settingsProvider.notifier).toggleFiatFavourite(v),
           isDarkMode: isDark,
           searchHint: l10n.searchCurrency,
         ),
@@ -380,6 +387,9 @@ class SettingsSheet extends ConsumerWidget {
             currentId: settings.row3Currency,
             onSelected: (v) =>
                 ref.read(settingsProvider.notifier).setRow3Currency(v),
+            favourites: settings.fiatFavourites,
+            onToggleFavourite: (v) =>
+                ref.read(settingsProvider.notifier).toggleFiatFavourite(v),
             isDarkMode: isDark,
             searchHint: l10n.searchCurrency,
           ),
@@ -445,7 +455,7 @@ class SettingsSheet extends ConsumerWidget {
   }) {
     final accent = isDark ? accentColor : lightAccentColor;
     final fontSize = compactVertical ? 21.0 : 25.0;
-    final lineHeight = compactVertical ? 1.05 : null;
+    final lineHeight = compactVertical ? 1.0 : null;
     final vPad = compactVertical ? 7.0 : 12.0;
 
     return Padding(

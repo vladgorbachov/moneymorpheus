@@ -39,13 +39,13 @@ class AppLocalizationsRo extends AppLocalizations {
   String get settings => 'Setări';
 
   @override
-  String get baseCurrency => 'Prima monedă\npreferată';
+  String get baseCurrency => 'Prima\n\nmonedă\n\npreferată';
 
   @override
-  String get row2Currency => 'A doua monedă\npreferată';
+  String get row2Currency => 'A doua\n\nmonedă\n\npreferată';
 
   @override
-  String get row3Currency => 'A treia monedă\npreferată';
+  String get row3Currency => 'A treia\n\nmonedă\n\npreferată';
 
   @override
   String get done => 'Gata';

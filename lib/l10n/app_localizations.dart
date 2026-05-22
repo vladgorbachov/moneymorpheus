@@ -175,19 +175,19 @@ abstract class AppLocalizations {
   /// No description provided for @baseCurrency.
   ///
   /// In en, this message translates to:
-  /// **'First preferable\ncurrency'**
+  /// **'First\n\npreferable\n\ncurrency'**
   String get baseCurrency;
 
   /// No description provided for @row2Currency.
   ///
   /// In en, this message translates to:
-  /// **'Second preferable\ncurrency'**
+  /// **'Second\n\npreferable\n\ncurrency'**
   String get row2Currency;
 
   /// No description provided for @row3Currency.
   ///
   /// In en, this message translates to:
-  /// **'Third preferable\ncurrency'**
+  /// **'Third\n\npreferable\n\ncurrency'**
   String get row3Currency;
 
   /// No description provided for @done.

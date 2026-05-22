@@ -39,13 +39,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settings => 'Настройки';
 
   @override
-  String get baseCurrency => 'Первая предпочтительная\nвалюта';
+  String get baseCurrency => 'Первая\n\nпредпочтительная\n\nвалюта';
 
   @override
-  String get row2Currency => 'Вторая предпочтительная\nвалюта';
+  String get row2Currency => 'Вторая\n\nпредпочтительная\n\nвалюта';
 
   @override
-  String get row3Currency => 'Третья предпочтительная\nвалюта';
+  String get row3Currency => 'Третья\n\nпредпочтительная\n\nвалюта';
 
   @override
   String get done => 'Готово';

@@ -39,13 +39,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings => '设置';
 
   @override
-  String get baseCurrency => '首选货币\n一';
+  String get baseCurrency => '一\n\n首选\n\n货币';
 
   @override
-  String get row2Currency => '首选货币\n二';
+  String get row2Currency => '二\n\n首选\n\n货币';
 
   @override
-  String get row3Currency => '首选货币\n三';
+  String get row3Currency => '三\n\n首选\n\n货币';
 
   @override
   String get done => '完成';

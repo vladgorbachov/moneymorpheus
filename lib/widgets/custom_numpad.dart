@@ -199,7 +199,7 @@ class _ModeToggleButton extends ConsumerWidget {
   }
 }
 
-/// Rounded stadium: artwork fills the button at native aspect ratio (letterboxed).
+/// Rounded stadium: logos fill button height; aspect ratio preserved (may clip sides).
 class _CryptoNavButton extends ConsumerWidget {
   const _CryptoNavButton({
     required this.topHeight,
@@ -246,17 +246,14 @@ class _CryptoNavButton extends ConsumerWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(999),
               child: SizedBox.expand(
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Image.asset(
-                    isDark
-                        ? 'assets/market_logo_dark.png'
-                        : 'assets/market_logo_light.jpg',
-                    fit: BoxFit.contain,
-                    alignment: Alignment.center,
-                    gaplessPlayback: true,
-                    filterQuality: FilterQuality.high,
-                  ),
+                child: Image.asset(
+                  isDark
+                      ? 'assets/market_logo_dark.png'
+                      : 'assets/market_logo_light.png',
+                  fit: BoxFit.fitHeight,
+                  alignment: Alignment.center,
+                  gaplessPlayback: true,
+                  filterQuality: FilterQuality.high,
                 ),
               ),
             ),

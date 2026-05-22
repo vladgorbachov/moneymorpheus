@@ -13,6 +13,8 @@ class SelectorSheet extends StatefulWidget {
   final Future<List<SelectorItem>>? itemsFuture;
   final String currentId;
   final void Function(String) onSelected;
+  final Set<String> favourites;
+  final void Function(String)? onToggleFavourite;
   final bool isDarkMode;
   final String searchHint;
 
@@ -22,6 +24,8 @@ class SelectorSheet extends StatefulWidget {
     this.itemsFuture,
     required this.currentId,
     required this.onSelected,
+    this.favourites = const <String>{},
+    this.onToggleFavourite,
     required this.isDarkMode,
     required this.searchHint,
   }) : assert(items != null || itemsFuture != null);
@@ -32,6 +36,8 @@ class SelectorSheet extends StatefulWidget {
     Future<List<SelectorItem>>? itemsFuture,
     required String currentId,
     required void Function(String) onSelected,
+    Set<String> favourites = const <String>{},
+    void Function(String)? onToggleFavourite,
     required bool isDarkMode,
     required String searchHint,
   }) {
@@ -44,6 +50,8 @@ class SelectorSheet extends StatefulWidget {
         itemsFuture: itemsFuture,
         currentId: currentId,
         onSelected: onSelected,
+        favourites: favourites,
+        onToggleFavourite: onToggleFavourite,
         isDarkMode: isDarkMode,
         searchHint: searchHint,
       ),
@@ -62,12 +70,14 @@ class _SelectorSheetState extends State<SelectorSheet> {
   String _searchQuery = '';
   String? _lastSyncedSearch;
   int _selectedIndex = 0;
+  late Set<String> _favourites;
 
   static const double _lightListRowExtent = 53;
 
   @override
   void initState() {
     super.initState();
+    _favourites = widget.favourites.map((item) => item.toUpperCase()).toSet();
     _wheelController = FixedExtentScrollController();
     _searchController.addListener(() {
       final q = _searchController.text.toLowerCase();
@@ -89,8 +99,10 @@ class _SelectorSheetState extends State<SelectorSheet> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_lightListScrollController.hasClients) return;
       final maxScroll = _lightListScrollController.position.maxScrollExtent;
-      final target =
-          (_selectedIndex * _lightListRowExtent).clamp(0.0, maxScroll);
+      final target = (_selectedIndex * _lightListRowExtent).clamp(
+        0.0,
+        maxScroll,
+      );
       _lightListScrollController.jumpTo(target);
     });
   }
@@ -100,6 +112,18 @@ class _SelectorSheetState extends State<SelectorSheet> {
     return items.where((e) {
       return e.searchableText.contains(_searchQuery);
     }).toList();
+  }
+
+  List<SelectorItem> _orderedItems(List<SelectorItem> items) {
+    if (_favourites.isEmpty) return items;
+    final ordered = List<SelectorItem>.from(items);
+    ordered.sort((a, b) {
+      final aFav = _favourites.contains(a.id.toUpperCase());
+      final bFav = _favourites.contains(b.id.toUpperCase());
+      if (aFav != bFav) return aFav ? -1 : 1;
+      return a.id.compareTo(b.id);
+    });
+    return ordered;
   }
 
   /// When the search string changes, re-align selection with [currentId] in the filtered list.
@@ -200,8 +224,9 @@ class _SelectorSheetState extends State<SelectorSheet> {
   }
 
   Widget _buildWithItems(BuildContext context, List<SelectorItem> items) {
-    _syncSelectionToSearch(items);
-    final filtered = _filteredItems(items);
+    final orderedItems = _orderedItems(items);
+    _syncSelectionToSearch(orderedItems);
+    final filtered = _filteredItems(orderedItems);
 
     if (filtered.isNotEmpty && _selectedIndex >= filtered.length) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -221,6 +246,26 @@ class _SelectorSheetState extends State<SelectorSheet> {
       return _buildDarkPickerContent(context, filtered, l10n);
     }
     return _buildLightPickerContent(context, filtered, l10n);
+  }
+
+  void _selectAndClose(BuildContext context, String id) {
+    widget.onSelected(id);
+    Navigator.of(context).pop();
+  }
+
+  bool _isFavourite(String id) => _favourites.contains(id.toUpperCase());
+
+  void _toggleFavourite(String id) {
+    if (widget.onToggleFavourite == null) return;
+    final normalized = id.toUpperCase();
+    setState(() {
+      if (_favourites.contains(normalized)) {
+        _favourites.remove(normalized);
+      } else {
+        _favourites.add(normalized);
+      }
+    });
+    widget.onToggleFavourite!(id);
   }
 
   Widget _buildDarkPickerContent(
@@ -313,14 +358,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
                                   HapticFeedback.selectionClick();
-                                  setState(() => _selectedIndex = index);
-                                  _wheelController.animateToItem(
-                                    index,
-                                    duration: const Duration(
-                                      milliseconds: 220,
-                                    ),
-                                    curve: Curves.easeOutCubic,
-                                  );
+                                  _selectAndClose(context, item.id);
                                 },
                                 child: Center(
                                   child: AnimatedContainer(
@@ -344,6 +382,31 @@ class _SelectorSheetState extends State<SelectorSheet> {
                                           item.leading!,
                                           const SizedBox(width: 12),
                                         ],
+                                        if (widget.onToggleFavourite != null)
+                                          GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () {
+                                              HapticFeedback.selectionClick();
+                                              _toggleFavourite(item.id);
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 4,
+                                                  ),
+                                              child: Icon(
+                                                _isFavourite(item.id)
+                                                    ? Icons.star_rounded
+                                                    : Icons.star_border_rounded,
+                                                size: 22,
+                                                color: _isFavourite(item.id)
+                                                    ? const Color(0xFFFFD700)
+                                                    : _hintColor(),
+                                              ),
+                                            ),
+                                          ),
+                                        if (widget.onToggleFavourite != null)
+                                          const SizedBox(width: 6),
                                         Text(
                                           item.label,
                                           style: TextStyle(
@@ -500,7 +563,7 @@ class _SelectorSheetState extends State<SelectorSheet> {
                               child: InkWell(
                                 onTap: () {
                                   HapticFeedback.selectionClick();
-                                  setState(() => _selectedIndex = index);
+                                  _selectAndClose(context, item.id);
                                 },
                                 borderRadius: BorderRadius.circular(12),
                                 child: AnimatedContainer(
@@ -523,6 +586,30 @@ class _SelectorSheetState extends State<SelectorSheet> {
                                         item.leading!,
                                         const SizedBox(width: 12),
                                       ],
+                                      if (widget.onToggleFavourite != null)
+                                        GestureDetector(
+                                          behavior: HitTestBehavior.opaque,
+                                          onTap: () {
+                                            HapticFeedback.selectionClick();
+                                            _toggleFavourite(item.id);
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 2,
+                                            ),
+                                            child: Icon(
+                                              _isFavourite(item.id)
+                                                  ? Icons.star_rounded
+                                                  : Icons.star_border_rounded,
+                                              size: 22,
+                                              color: _isFavourite(item.id)
+                                                  ? const Color(0xFFFFD700)
+                                                  : _hintColor(),
+                                            ),
+                                          ),
+                                        ),
+                                      if (widget.onToggleFavourite != null)
+                                        const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           item.label,

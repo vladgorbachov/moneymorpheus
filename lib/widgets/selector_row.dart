@@ -53,7 +53,7 @@ class SelectorRow extends StatelessWidget {
                     fontSize: labelSize,
                     fontWeight: FontWeight.w700,
                     color: hintColor,
-                    height: compactVertical ? 1.05 : null,
+                    height: compactVertical ? 1.0 : null,
                   ),
                 ),
               ),

@@ -39,13 +39,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settings => 'Ustawienia';
 
   @override
-  String get baseCurrency => 'Pierwsza preferowana\nwaluta';
+  String get baseCurrency => 'Pierwsza\n\npreferowana\n\nwaluta';
 
   @override
-  String get row2Currency => 'Druga preferowana\nwaluta';
+  String get row2Currency => 'Druga\n\npreferowana\n\nwaluta';
 
   @override
-  String get row3Currency => 'Trzecia preferowana\nwaluta';
+  String get row3Currency => 'Trzecia\n\npreferowana\n\nwaluta';
 
   @override
   String get done => 'Gotowe';

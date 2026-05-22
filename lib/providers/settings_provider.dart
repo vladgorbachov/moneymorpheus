@@ -15,6 +15,7 @@ class SettingsState {
   final bool isRow3Visible;
   final bool isDarkMode;
   final String locale;
+  final Set<String> fiatFavourites;
 
   const SettingsState({
     this.baseCurrency = 'EUR',
@@ -27,6 +28,7 @@ class SettingsState {
     this.isRow3Visible = false,
     this.isDarkMode = true,
     this.locale = 'en',
+    this.fiatFavourites = const <String>{},
   });
 
   SettingsState copyWith({
@@ -40,6 +42,7 @@ class SettingsState {
     bool? isRow3Visible,
     bool? isDarkMode,
     String? locale,
+    Set<String>? fiatFavourites,
   }) {
     return SettingsState(
       baseCurrency: baseCurrency ?? this.baseCurrency,
@@ -52,6 +55,7 @@ class SettingsState {
       isRow3Visible: isRow3Visible ?? this.isRow3Visible,
       isDarkMode: isDarkMode ?? this.isDarkMode,
       locale: locale ?? this.locale,
+      fiatFavourites: fiatFavourites ?? this.fiatFavourites,
     );
   }
 
@@ -91,6 +95,7 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     final isRow3Visible = await _repository.getIsRow3Visible();
     final isDarkMode = await _repository.getIsDarkMode();
     final locale = await _repository.getLocale();
+    final fiatFavourites = await _repository.getFiatFavourites();
     return SettingsState(
       baseCurrency: baseCurrency,
       row2Currency: row2Currency,
@@ -102,6 +107,7 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
       isRow3Visible: isRow3Visible,
       isDarkMode: isDarkMode,
       locale: locale,
+      fiatFavourites: fiatFavourites,
     );
   }
 
@@ -186,6 +192,20 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
       () => _repository.setLocale(value),
       (s) => s.copyWith(locale: value),
     );
+  }
+
+  Future<void> toggleFiatFavourite(String currencyCode) async {
+    await _update(() => _repository.toggleFiatFavourite(currencyCode), (s) {
+      final normalized = currencyCode.trim().toUpperCase();
+      if (normalized.isEmpty) return s;
+      final updated = Set<String>.from(s.fiatFavourites);
+      if (updated.contains(normalized)) {
+        updated.remove(normalized);
+      } else {
+        updated.add(normalized);
+      }
+      return s.copyWith(fiatFavourites: updated);
+    });
   }
 
   Future<void> swapBaseWithRow2() async {

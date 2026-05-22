@@ -34,8 +34,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           _ => null,
         };
         final isDark = settings.isDarkMode;
-        final appBarIconColor =
-            isDark ? Colors.white : refLightKeypadTeal;
+        final appBarIconColor = isDark ? Colors.white : refLightKeypadTeal;
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -53,7 +52,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           _buildAppBar(context, appBarIconColor),
                           const SizedBox(height: 8),
                           Expanded(
-                            child:                           _buildDisplayArea(
+                            child: _buildDisplayArea(
                               context,
                               ref,
                               settings,
@@ -104,7 +103,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           icon: Icon(Icons.menu_rounded, color: appBarIconColor, size: 29),
           onPressed: () {
             final box =
-                _currencyPanelKey.currentContext?.findRenderObject() as RenderBox?;
+                _currencyPanelKey.currentContext?.findRenderObject()
+                    as RenderBox?;
             final top = box?.localToGlobal(Offset.zero).dy;
             SettingsSheet.show(context, currencyPanelTop: top);
           },
@@ -128,21 +128,29 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       Expanded(
         child: CurrencyRow(
           currencyCode: isCrypto ? settings.baseCrypto : settings.baseCurrency,
-          amount: amounts[isCrypto ? settings.baseCrypto : settings.baseCurrency] ?? 0,
+          amount:
+              amounts[isCrypto ? settings.baseCrypto : settings.baseCurrency] ??
+              0,
           inputOverride: calc.inputString,
           onTap: () => isCrypto
               ? AssetPicker.showCrypto(
                   context,
                   ref,
                   currentId: settings.baseCrypto,
-                  onSelected: (v) => ref.read(settingsProvider.notifier).setBaseCrypto(v),
+                  onSelected: (v) =>
+                      ref.read(settingsProvider.notifier).setBaseCrypto(v),
                   isDarkMode: settings.isDarkMode,
                   searchHint: AppLocalizations.of(context)!.searchCrypto,
                 )
               : AssetPicker.showFiat(
                   context,
                   currentId: settings.baseCurrency,
-                  onSelected: (v) => ref.read(settingsProvider.notifier).setBaseCurrency(v),
+                  onSelected: (v) =>
+                      ref.read(settingsProvider.notifier).setBaseCurrency(v),
+                  favourites: settings.fiatFavourites,
+                  onToggleFavourite: (v) => ref
+                      .read(settingsProvider.notifier)
+                      .toggleFiatFavourite(v),
                   isDarkMode: settings.isDarkMode,
                   searchHint: AppLocalizations.of(context)!.searchCurrency,
                 ),
@@ -158,6 +166,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               currentId: settings.row2Currency,
               onSelected: (v) =>
                   ref.read(settingsProvider.notifier).setRow2Currency(v),
+              favourites: settings.fiatFavourites,
+              onToggleFavourite: (v) =>
+                  ref.read(settingsProvider.notifier).toggleFiatFavourite(v),
               isDarkMode: settings.isDarkMode,
               searchHint: AppLocalizations.of(context)!.searchCurrency,
             ),
@@ -173,6 +184,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               currentId: settings.row3Currency,
               onSelected: (v) =>
                   ref.read(settingsProvider.notifier).setRow3Currency(v),
+              favourites: settings.fiatFavourites,
+              onToggleFavourite: (v) =>
+                  ref.read(settingsProvider.notifier).toggleFiatFavourite(v),
               isDarkMode: settings.isDarkMode,
               searchHint: AppLocalizations.of(context)!.searchCurrency,
             ),
@@ -205,8 +219,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   iconColor: onGradientIconColor,
                   onTap: () => isCrypto
                       ? ref
-                          .read(settingsProvider.notifier)
-                          .swapBaseCryptoWithRow2Crypto()
+                            .read(settingsProvider.notifier)
+                            .swapBaseCryptoWithRow2Crypto()
                       : ref.read(settingsProvider.notifier).swapBaseWithRow2(),
                 ),
               ),

@@ -15,6 +15,7 @@ class SettingsRepository {
   static const _keyIsRow3Visible = 'is_row3_visible';
   static const _keyIsDarkMode = 'is_dark_mode';
   static const _keyLocale = 'locale';
+  static const _keyFiatFavourites = 'fiat_favourites';
 
   Future<String> getBaseCurrency() async {
     return (await _prefs.getString(_keyBaseCurrency)) ?? 'EUR';
@@ -56,6 +57,12 @@ class SettingsRepository {
     return (await _prefs.getString(_keyLocale)) ?? 'en';
   }
 
+  Future<Set<String>> getFiatFavourites() async {
+    final list = await _prefs.getStringList(_keyFiatFavourites);
+    if (list == null || list.isEmpty) return <String>{};
+    return list.map((item) => item.trim().toUpperCase()).toSet();
+  }
+
   Future<void> setBaseCurrency(String value) async {
     await _prefs.setString(_keyBaseCurrency, value);
   }
@@ -94,5 +101,22 @@ class SettingsRepository {
 
   Future<void> setLocale(String value) async {
     await _prefs.setString(_keyLocale, value);
+  }
+
+  Future<void> setFiatFavourites(Set<String> favourites) async {
+    final sorted = favourites.toList()..sort();
+    await _prefs.setStringList(_keyFiatFavourites, sorted);
+  }
+
+  Future<void> toggleFiatFavourite(String currencyCode) async {
+    final normalized = currencyCode.trim().toUpperCase();
+    if (normalized.isEmpty) return;
+    final current = await getFiatFavourites();
+    if (current.contains(normalized)) {
+      current.remove(normalized);
+    } else {
+      current.add(normalized);
+    }
+    await setFiatFavourites(current);
   }
 }

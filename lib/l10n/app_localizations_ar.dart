@@ -39,13 +39,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settings => 'الإعدادات';
 
   @override
-  String get baseCurrency => 'العملة المفضلة\nالأولى';
+  String get baseCurrency => 'العملة\n\nالمفضلة\n\nالأولى';
 
   @override
-  String get row2Currency => 'العملة المفضلة\nالثانية';
+  String get row2Currency => 'العملة\n\nالمفضلة\n\nالثانية';
 
   @override
-  String get row3Currency => 'العملة المفضلة\nالثالثة';
+  String get row3Currency => 'العملة\n\nالمفضلة\n\nالثالثة';
 
   @override
   String get done => 'تم';
